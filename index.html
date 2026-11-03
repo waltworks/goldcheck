@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoldCheck v0.3</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#292720">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="GoldCheck">
+
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f5f3ee;
+  color: #27251e;
+  font-family: Arial, sans-serif;
+}
+main {
+  max-width: 440px;
+  margin: auto;
+  padding: 24px 18px;
+}
+h1 { margin: 4px 0; font-size: 28px; }
+.sub {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin: 14px 0 7px;
+  color: #666;
+  font-size: 13px;
+}
+input, select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  background: white;
+  font-size: 17px;
+  color: #222;
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+button {
+  cursor: pointer;
+  font-size: 15px;
+}
+.tabs button {
+  flex: 1;
+  padding: 13px;
+  border: 0;
+  border-radius: 9px;
+  background: #e6e3da;
+}
+.tabs button.active {
+  background: #292720;
+  color: white;
+}
+.refresh {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px;
+  border: 0;
+  background: #292720;
+  color: white;
+  border-radius: 9px;
+}
+.refresh:disabled { opacity: .55; }
+.result-label { color: #777; font-size: 13px; }
+.big {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 7px 0;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 17px;
+  font-size: 14px;
+}
+.line strong { text-align: right; }
+.positive { color: #b35d26; }
+.negative { color: #23805a; }
+.note {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<main>
+  <h1>GoldCheck</h1>
+  <div class="sub">Gold premium calculator · v0.3</div>
+
+  <div class="card">
+    <strong>Currency</strong>
+    <select id="currency">
+      <option value="SAR">SAR — Saudi Riyal</option>
+      <option value="USD">USD — US Dollar</option>
+      <option value="PHP">PHP — Philippine Peso</option>
+      <option value="EUR">EUR — Euro</option>
+      <option value="GBP">GBP — British Pound</option>
+      <option value="AED">AED — UAE Dirham</option>
+      <option value="KWD">KWD — Kuwaiti Dinar</option>
+      <option value="QAR">QAR — Qatari Riyal</option>
+      <option value="BHD">BHD — Bahraini Dinar</option>
+      <option value="OMR">OMR — Omani Rial</option>
+      <option value="INR">INR — Indian Rupee</option>
+    </select>
+  </div>
+  
+  <div class="card">
+    <strong>Gold spot price</strong>
+
+    <label id="spotLabel">24K gold (SAR / gram)</label>
+    <input id="spot" type="number" step="any"
+      placeholder="Loading price...">
+
+    <button class="refresh" id="refreshBtn"
+      onclick="refreshPrices()">
+      Refresh Gold Price
+    </button>
+
+    <p class="note" id="priceStatus">
+      Loading saved prices...
+    </p>
+    <p class="note" id="fxStatus"></p>
+    <p class="note">
+      You can manually edit the spot price.
+      Refresh replaces manual entries with the latest
+      available quote.
+    </p>
+  </div>
+
+<div class="tabs">
+    <button id="jewelryTab" class="active"
+      onclick="setType('Jewelry')">Jewelry</button>
+    <button id="bullionTab"
+      onclick="setType('Bullion')">Bullion</button>
+  </div>
+
+  <div class="card">
+    <strong id="itemTitle">Jewelry details</strong>
+
+    <label id="priceLabel">Store selling price (SAR)</label>
+    <input id="price" type="number" step="any"
+      placeholder="Enter selling price">
+
+    <label>Total weight (grams)</label>
+    <input id="weight" type="number" step="any"
+      placeholder="Enter weight">
+
+    <label>Gold fineness</label>
+    <select id="purity">
+      <option value="1">24K — Pure gold (nominal)</option>
+      <option value="0.9999">999.9</option>
+      <option value="0.999">999</option>
+      <option value="0.9166666667">22K — 916.7</option>
+      <option value="0.875">21K — 875</option>
+      <option value="0.75">18K — 750</option>
+      <option value="0.585">14K — 585</option>
+      <option value="0.4166666667">10K — 416.7</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="result-label">Premium above gold spot</div>
+    <div class="big" id="premiumPct">—</div>
+
+    <div class="line">
+      <span>Premium per gram of pure gold</span>
+      <strong id="premiumGram">—</strong>
+    </div>
+
+    <div class="line">
+      <span>Gold content value</span>
+      <strong id="goldValue">—</strong>
+    </div>
+
+    <div class="line">
+      <span>Total premium</span>
+      <strong id="totalPremium">—</strong>
+    </div>
+
+    <div class="line">
+      <span>Effective price per pure gold gram</span>
+      <strong id="effectivePrice">—</strong>
+    </div>
+  </div>
+
+  <p class="note">
+    Theoretical gold content value only.
+    Taxes, workmanship, gemstones and other components
+    are not separately deducted.
+    Currency rates are indicative daily reference rates.
+  </p>
+</main>
+
+<script>
+const OUNCE_GRAMS = 31.1034768;
+const STORAGE_KEY = "goldcheck_v03";
+
+const el = id => document.getElementById(id);
+const inputs = {
+  spot: el("spot"),
+  price: el("price"),
+  weight: el("weight"),
+  purity: el("purity")
+};
+
+const defaultItems = () => ({
+  Jewelry: { price: "", weight: "", purity: "0.75" },
+  Bullion: { price: "", weight: "", purity: "0.9999" }
+});
+
+let state = {
+  currency: "SAR",
+  type: "Jewelry",
+  items: defaultItems(),
+  usdPerOunce: null,
+  quoteTime: null,
+  rates: { USD: 1 },
+  fxDate: null
+};
+
+// Load saved data
+try {
+  const saved = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "null"
+  );
+
+  if (saved) {
+    if (saved.currency &&
+        [...el("currency").options].some(
+          o => o.value === saved.currency
+        )) {
+      state.currency = saved.currency;
+    }
+
+    if (["Jewelry", "Bullion"].includes(saved.type)) {
+      state.type = saved.type;
+    }
+
+    for (const type of ["Jewelry", "Bullion"]) {
+      if (saved.items && saved.items[type]) {
+        Object.assign(state.items[type], saved.items[type]);
+      }
+    }
+
+    if (Number(saved.usdPerOunce) > 0) {
+      state.usdPerOunce = Number(saved.usdPerOunce);
+      state.quoteTime = saved.quoteTime || null;
+    }
+
+    if (saved.rates && typeof saved.rates === "object") {
+      for (const [code, value] of Object.entries(saved.rates)) {
+        if (Number(value) > 0) {
+          state.rates[code] = Number(value);
+        }
+      }
+      state.rates.USD = 1;
+    }
+
+    state.fxDate = saved.fxDate || null;
+  }
+} catch (err) {
+  console.warn("Saved data could not be loaded", err);
+}
+
+function save() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY, JSON.stringify(state)
+    );
+  } catch (err) {
+    console.warn("Saving is unavailable", err);
+  }
+}
+
+function format(n) {
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function rate() {
+  return state.currency === "USD"
+    ? 1
+    : state.rates[state.currency];
+}
+
+function updateLabels() {
+  const c = state.currency;
+  el("spotLabel").textContent = `24K gold (${c} / gram)`;
+  el("priceLabel").textContent = `Store selling price (${c})`;
+  el("itemTitle").textContent = state.type + " details";
+  el("currency").value = c;
+
+  el("jewelryTab").classList.toggle(
+    "active", state.type === "Jewelry"
+  );
+  el("bullionTab").classList.toggle(
+    "active", state.type === "Bullion"
+  );
+}
+
+function showItem() {
+  const item = state.items[state.type];
+  inputs.price.value = item.price;
+  inputs.weight.value = item.weight;
+  inputs.purity.value = item.purity;
+  updateLabels();
+  calculate();
+}
+
+function setType(type) {
+  if (type === state.type) return;
+  state.type = type;
+  save();
+  showItem();
+}
+
+function updateSpotDisplay() {
+  const fx = rate();
+
+  if (state.usdPerOunce > 0 && fx > 0) {
+    const perGram =
+      state.usdPerOunce / OUNCE_GRAMS * fx;
+    inputs.spot.value = perGram.toFixed(2);
+
+    const time = state.quoteTime
+      ? new Date(state.quoteTime).toLocaleString()
+      : "Unknown";
+
+    el("priceStatus").textContent =
+      `Gold-API quote: ${time}`;
+  } else {
+    inputs.spot.value = "";
+
+    el("priceStatus").textContent =
+      state.usdPerOunce
+        ? "Exchange rate unavailable. Enter a manual spot price."
+        : "No saved gold quote. Enter a manual spot price.";
+  }
+
+  el("fxStatus").textContent =
+    state.currency === "USD"
+      ? "Exchange rate: USD base (1.00)"
+      : fx > 0
+        ? `1 USD = ${Number(fx).toFixed(4)} ${state.currency}` +
+          ` | FX date: ${state.fxDate || "unknown"}`
+        : "Exchange rate unavailable.";
+
+  calculate();
+}
+
+function calculate() {
+  const spot = Number(inputs.spot.value);
+  const price = Number(inputs.price.value);
+  const weight = Number(inputs.weight.value);
+  const purity = Number(inputs.purity.value);
+
+  const valid =
+    inputs.spot.value !== "" &&
+    inputs.price.value !== "" &&
+    inputs.weight.value !== "" &&
+    spot > 0 && price >= 0 &&
+    weight > 0 && purity > 0;
+
+  const fields = [
+    "premiumPct", "premiumGram", "goldValue",
+    "totalPremium", "effectivePrice"
+  ];
+
+  if (!valid) {
+    fields.forEach(id => el(id).textContent = "—");
+    return;
+  }
+
+  const pureGoldWeight = weight * purity;
+  const goldValue = pureGoldWeight * spot;
+  const effectivePrice = price / pureGoldWeight;
+  const premiumGram = effectivePrice - spot;
+  const totalPremium = price - goldValue;
+  const premiumPct = totalPremium / goldValue * 100;
+
+  const pct = el("premiumPct");
+  pct.textContent =
+    (premiumPct >= 0 ? "+" : "") +
+    format(premiumPct) + "%";
+  pct.className = "big " +
+    (premiumPct >= 0 ? "positive" : "negative");
+
+  const c = state.currency;
+  el("premiumGram").textContent =
+    format(premiumGram) + " " + c + "/g";
+  el("goldValue").textContent =
+    format(goldValue) + " " + c;
+  el("totalPremium").textContent =
+    format(totalPremium) + " " + c;
+  el("effectivePrice").textContent =
+    format(effectivePrice) + " " + c + "/g";
+}
+
+// Store tab inputs independently
+for (const id of ["price", "weight", "purity"]) {
+  inputs[id].addEventListener("input", () => {
+    state.items[state.type][id] = inputs[id].value;
+    save();
+    calculate();
+  });
+}
+
+inputs.spot.addEventListener("input", () => {
+  el("priceStatus").textContent =
+    "Manual spot price — press Refresh for a new quote";
+  calculate();
+});
+
+el("currency").addEventListener("change", () => {
+  state.currency = el("currency").value;
+
+  // Avoid interpreting a SAR shop price as PHP, etc.
+  state.items.Jewelry.price = "";
+  state.items.Bullion.price = "";
+
+  save();
+  showItem();
+  updateSpotDisplay();
+});
+
+// Fetch daily exchange rates
+async function fetchRates() {
+  const currencies = [...el("currency").options]
+    .map(o => o.value)
+    .filter(c => c !== "USD");
+
+  const url =
+    "https://api.frankfurter.dev/v2/rates?base=USD&quotes=" +
+    currencies.join(",");
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("FX HTTP " + response.status);
+
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    throw new Error("Invalid FX response");
+  }
+
+  const newRates = { ...state.rates, USD: 1 };
+  const dates = [];
+
+  for (const item of data) {
+    if (item.base === "USD" &&
+        currencies.includes(item.quote) &&
+        Number(item.rate) > 0) {
+      newRates[item.quote] = Number(item.rate);
+      if (item.date) dates.push(item.date);
+    }
+  }
+
+  if (Object.keys(newRates).length <= 1) {
+    throw new Error("No exchange rates returned");
+  }
+
+  state.rates = newRates;
+  state.fxDate = dates.length
+    ? dates.sort()[0]
+    : state.fxDate;
+  save();
+}
+
+// Fetch gold in USD per troy ounce
+async function fetchGold() {
+  const response = await fetch(
+    "https://api.gold-api.com/price/XAU"
+  );
+  if (!response.ok) {
+    throw new Error("Gold HTTP " + response.status);
+  }
+
+  const data = await response.json();
+  const value = Number(data.price);
+
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new Error("Invalid gold price");
+  }
+
+  state.usdPerOunce = value;
+  state.quoteTime = data.updatedAt || null;
+  save();
+}
+
+// Refresh both sources, preserving usable saved data
+async function refreshPrices() {
+  const button = el("refreshBtn");
+
+  // Prevent overlapping refresh requests
+  if (button.disabled) return;
+
+  button.disabled = true;
+  button.textContent = "↻ Updating...";
+
+  // Record when the refresh started
+  const startTime = Date.now();
+
+  const results = await Promise.allSettled([
+    fetchGold(),
+    fetchRates()
+  ]);
+
+  updateSpotDisplay();
+
+  const errors = [];
+
+  if (results[0].status === "rejected") {
+    errors.push("gold");
+    console.error(results[0].reason);
+  }
+
+  if (results[1].status === "rejected") {
+    errors.push("currency");
+    console.error(results[1].reason);
+  }
+
+  // Keep Updating visible for at least 500 milliseconds
+  const elapsed = Date.now() - startTime;
+  if (elapsed < 500) {
+    await new Promise(resolve =>
+      setTimeout(resolve, 500 - elapsed)
+    );
+  }
+
+  // Show when the last successful refresh happened
+  const refreshTime = new Date().toLocaleTimeString();
+
+  if (errors.length === 0) {
+    button.textContent = "✓ Updated";
+    button.style.backgroundColor = "#23805a";
+    el("fxStatus").textContent +=
+      " | Last checked: " + refreshTime;
+  } else {
+    button.textContent = "⚠ Update failed";
+    button.style.backgroundColor = "#b54545";
+    el("fxStatus").textContent +=
+      " | " + errors.join(" and ") +
+      " feed failed. Saved prices may be outdated.";
+  }
+
+  // Keep success/failure feedback visible for one second
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  button.textContent = "Refresh Gold Price";
+  button.style.backgroundColor = "#292720";
+  button.disabled = false;
+}
+
+// Initialize
+updateLabels();
+showItem();
+updateSpotDisplay();
+
+// Automatically refresh when opening
+refreshPrices();
+ // Register the offline service worker
+ if ("serviceWorker" in navigator) {
+   window.addEventListener("load", () => {
+     navigator.serviceWorker.register("./sw.js")
+       .then(() => {
+         console.log("GoldCheck offline support ready");
+       })
+       .catch(error => {
+         console.error("Service worker error:", error);
+       });
+   });
+ }
+</script>
+</body>
+</html>
