@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GoldCheck v0.3</title>
+<title>GoldCheck v0.5.0</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#292720">
@@ -14,6 +14,15 @@
 
 <style>
 * { box-sizing: border-box; }
+/* Keep the layout stable when switching pages */
+html {
+  scrollbar-gutter: stable;
+  overscroll-behavior-x: none;
+}
+
+body {
+  overscroll-behavior-x: none;
+}
 body {
   margin: 0;
   background: #f5f3ee;
@@ -23,7 +32,7 @@ body {
 main {
   max-width: 440px;
   margin: auto;
-  padding: 24px 18px;
+  padding: 24px 18px 110px;
 }
 h1 { margin: 4px 0; font-size: 28px; }
 .sub {
@@ -103,53 +112,1319 @@ button {
   color: #888;
   line-height: 1.5;
 }
+
+
+/* GoldCheck v0.5 — Spot price header */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+  background: #f5f3ee;
+  padding: 12px 0;
+
+}
+
+.app-header h1 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.spot-refresh {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  color: #27251e;
+  cursor: pointer;
+  text-align: left;
+}
+
+#headerSpot {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+#headerCurrency {
+  font-size: 16px;
+  color: #777;
+}
+
+#headerRefreshIcon {
+  font-size: 21px;
+  color: #777;
+}
+
+.header-status {
+  font-size: 14px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.spot-refresh:disabled {
+  opacity: 0.65;
+}
+
+.spot-refresh.success #headerSpot,
+.spot-refresh.success #headerRefreshIcon {
+  color: #23805a;
+}
+
+.spot-refresh.failure #headerSpot,
+.spot-refresh.failure #headerRefreshIcon {
+  color: #b54545;
+}
+.price-source {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+
+/* GoldCheck v0.5 — Bottom navigation */
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 100%;
+  max-width: 440px;
+
+  display: flex;
+  gap: 8px;
+
+  background: #f5f3ee;
+  padding: 10px 18px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+
+  border-top: 1px solid #ddd8ce;
+  z-index: 100;
+}
+
+
+.nav-btn {
+  flex: 1;
+  min-height: 58px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #777;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  background: #292720;
+  color: white;
+  font-weight: 700;
+}
+
+.nav-btn:focus-visible {
+  outline: 3px solid #b58c43;
+  outline-offset: 2px;
+}
+
+
+/* GoldCheck v0.5 — Settings button */
+
+.settings-button {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e6e3da;
+  color: #292720;
+  border: none;
+  border-radius: 12px;
+
+  font-size: 27px;
+  cursor: pointer;
+}
+
+.settings-button:active {
+  background: #d8d3c8;
+}
+
+.settings-button:focus-visible {
+  outline: 3px solid #b58c43;
+  outline-offset: 2px;
+}
+
+/* GoldCheck v0.5 — Buy / Sell switch */
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 5px;
+  border-radius: 14px;
+  background: #e6e3da;
+}
+
+.mode-btn {
+  flex: 1;
+  min-height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #555;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: #292720;
+  color: white;
+}
+
+.mode-btn:focus-visible {
+  outline: 3px solid #b58c43;
+  outline-offset: 2px;
+}
+
+
+/* GoldCheck v0.5 — Purchase recording */
+
+.purchase-button {
+  width: 100%;
+  min-height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #292720;
+  color: white;
+  font-size: 19px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.purchase-confirmation {
+  border: 2px solid #b58c43;
+}
+
+.purchase-confirmation[hidden],
+#purchaseAction[hidden] {
+  display: none;
+}
+
+.purchase-confirmation h2 {
+  font-size: 22px;
+  margin-top: 0;
+}
+
+.purchase-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.purchase-actions button {
+  flex: 1;
+  min-height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: #e6e3da;
+  color: #292720;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.purchase-actions .confirm {
+  background: #23805a;
+  color: white;
+}
+
+/* Hide elements using the HTML hidden attribute */
+[hidden] {
+  display: none !important;
+}
+
+/* Show the new Collection filters */
+.collection-filters {
+  display: flex !important;
+}
+
+input:disabled,
+select:disabled {
+  background: #eeeae2;
+  color: #555;
+  opacity: 1;
+}
+/* ===== START: CLICKABLE HEADER ===== */
+
+.app-header {
+  cursor: pointer;
+}
+
+/* ===== END: CLICKABLE HEADER ===== */
+
+/* ===== START: FIXED TOP HEADER ===== */
+
+.top-shell {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 100%;
+  max-width: 440px;
+
+  padding: 12px 18px 10px;
+  padding-top: max(12px, env(safe-area-inset-top));
+
+  background: #f5f3ee;
+  border-bottom: 1px solid #ddd8ce;
+
+  z-index: 50;
+}
+
+.top-shell .app-header {
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.top-shell .mode-switch {
+  margin-bottom: 0;
+}
+
+main {
+  padding-top: var(--top-space, 180px);
+}
+
+/* ===== END: FIXED TOP HEADER ===== */
+
+/* ===== START: LEGACY SELECTOR CLEANUP ===== */
+
+/* Hide the old Jewelry/Bullion selector */
+.tabs {
+  display: none !important;
+}
+
+/* Show the Collection filters */
+.collection-filters {
+  display: flex !important;
+}
+
+/* ===== END: LEGACY SELECTOR CLEANUP ===== */
+
+/* ===== START: COLLECTION CARD DESIGN ===== */
+
+.collection-card {
+  padding: 20px;
+}
+
+.collection-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.collection-card-header h3 {
+  margin: 0 0 5px;
+  font-size: 21px;
+}
+
+.collection-specs {
+  font-size: 13px;
+  color: #777;
+}
+
+.collection-status {
+  padding: 7px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.collection-status.owned {
+  color: #23805a;
+  background: #e3f3ea;
+}
+
+.collection-status.sold {
+  color: #666;
+  background: #eeeae2;
+}
+
+.collection-card .line {
+  margin-top: 12px;
+}
+
+.collection-divider {
+  border: 0;
+  border-top: 1px solid #eeeae2;
+  margin: 16px 0;
+}
+
+/* ===== END: COLLECTION CARD DESIGN ===== */
+
+/* ===== START: COMPACT COLLECTION ===== */
+
+.collection-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collection-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.collection-number {
+  min-width: 24px;
+  color: #999;
+  font-size: 13px;
+}
+
+.collection-summary-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.collection-summary-text strong {
+  font-size: 16px;
+}
+
+.collection-summary-text .collection-specs {
+  margin-top: 4px;
+}
+
+.collection-arrow {
+  font-size: 18px;
+  color: #777;
+}
+
+.collection-details {
+  padding: 0 16px 18px;
+  border-top: 1px solid #eeeae2;
+}
+
+.collection-details[hidden] {
+  display: none;
+}
+
+/* ===== END: COMPACT COLLECTION ===== */
+
+/* ===== START: COLLECTION ACTION BUTTONS ===== */
+
+.collection-edit-button {
+  display: inline-block;
+  width: calc(50% - 6px);
+  margin: 16px 0 0;
+  padding: 12px 6px;
+  border: 1px solid #ddd8ce;
+  border-radius: 9px;
+  background: #f5f3ee;
+  color: #292720;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ===== START: EQUAL HEIGHT COLLECTION BUTTONS ===== */
+
+.collection-details {
+  display: flow-root;
+}
+
+.collection-edit-button {
+  vertical-align: top;
+  min-height: 64px;
+}
+
+/* ===== END: EQUAL HEIGHT COLLECTION BUTTONS ===== */
+
+.collection-edit-button + .collection-edit-button {
+  margin-left: 12px;
+}
+
+/* ===== END: COLLECTION ACTION BUTTONS ===== */
+
+/* ===== START: CONFIRMATION DIALOG STYLE ===== */
+
+.confirm-dialog {
+  width: calc(100% - 36px);
+  max-width: 360px;
+  margin: auto;
+  padding: 26px 22px;
+  border: none;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #27251e;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.confirm-dialog h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.confirm-dialog p {
+  color: #666;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: center;
+  white-space: pre-line;
+  margin-bottom: 24px;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-dialog-actions button {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.confirm-cancel {
+  background: #e6e3da;
+  color: #292720;
+}
+
+.confirm-accept {
+  background: #292720;
+  color: white;
+}
+
+.confirm-accept.destructive {
+  background: #b54545;
+}
+
+/* ===== END: CONFIRMATION DIALOG STYLE ===== */
+
+/* ===== START: SETTINGS TOGGLE STYLE ===== */
+
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.setting-toggle span {
+  flex: 1;
+}
+
+.setting-toggle strong {
+  display: block;
+  font-size: 15px;
+  color: #292720;
+}
+
+.setting-toggle small {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #777;
+}
+
+.setting-toggle input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: #292720;
+}
+
+/* ===== END: SETTINGS TOGGLE STYLE ===== */
+
+/* ===== START: APPEARANCE SETTINGS STYLE ===== */
+
+.appearance-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.appearance-options label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 14px;
+  background: #f5f3ee;
+  border: 1px solid #ddd8ce;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.appearance-options input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: #292720;
+}
+
+.appearance-options span {
+  color: #292720;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ===== END: APPEARANCE SETTINGS STYLE ===== */
+
+/* ===== START: GOLDCHECK THEMES ===== */
+
+:root {
+  color-scheme: light;
+
+  --gc-bg: #f5f3ee;
+  --gc-card: #ffffff;
+  --gc-text: #27251e;
+  --gc-muted: #777777;
+  --gc-control: #e6e3da;
+  --gc-border: #ddd8ce;
+  --gc-accent: #292720;
+  --gc-accent-text: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --gc-bg: #211f1c;
+  --gc-card: #302d28;
+  --gc-text: #f3efe7;
+  --gc-muted: #aaa49a;
+  --gc-control: #403b35;
+  --gc-border: #514c44;
+  --gc-accent: #d4bb8a;
+  --gc-accent-text: #211f1c;
+}
+
+body,
+.top-shell,
+.bottom-nav,
+.app-header {
+  background: var(--gc-bg);
+  color: var(--gc-text);
+}
+
+.card,
+.collection-card,
+.confirm-dialog {
+  background: var(--gc-card);
+  color: var(--gc-text);
+}
+
+h1, h2, h3,
+.spot-refresh,
+.collection-summary {
+  color: var(--gc-text);
+}
+
+input, select {
+  background: var(--gc-card);
+  color: var(--gc-text);
+  border-color: var(--gc-border);
+}
+
+label,
+.note,
+.result-label,
+.collection-specs,
+.collection-number,
+.collection-arrow,
+.header-status,
+.price-source,
+#headerCurrency,
+#headerRefreshIcon {
+  color: var(--gc-muted);
+}
+
+.mode-switch,
+.appearance-options label {
+  background: var(--gc-control);
+}
+
+.appearance-options span,
+.setting-toggle strong {
+  color: var(--gc-text);
+}
+
+.mode-btn,
+.nav-btn,
+.settings-button,
+.collection-edit-button {
+  color: var(--gc-text);
+}
+
+.mode-btn.active,
+.nav-btn.active,
+.purchase-button,
+.confirm-accept,
+.confirm-dialog-actions .confirm-accept {
+  background: var(--gc-accent);
+  color: var(--gc-accent-text);
+}
+
+.collection-edit-button,
+.settings-button,
+.confirm-cancel {
+  background: var(--gc-control);
+  border-color: var(--gc-border);
+}
+
+.collection-divider {
+  border-color: var(--gc-border);
+}
+
+.top-shell,
+.bottom-nav {
+  border-color: var(--gc-border);
+}
+
+/* Keep status colors visible in dark mode */
+:root[data-theme="dark"] .positive {
+  color: #efa579;
+}
+
+:root[data-theme="dark"] .negative {
+  color: #7dd3a4;
+}
+
+:root[data-theme="dark"] .collection-status.owned {
+  background: #244736;
+  color: #91e2b4;
+}
+
+:root[data-theme="dark"] .collection-status.sold {
+  background: #45413b;
+  color: #d6d0c5;
+}
+
+/* ===== END: GOLDCHECK THEMES ===== */
+
+/* ===== START: DARK THEME REFINEMENTS ===== */
+
+/* Collection filter buttons */
+:root[data-theme="dark"] .collection-filters button {
+  background: #403b35;
+  color: #f3efe7;
+}
+
+:root[data-theme="dark"] .collection-filters button.active {
+  background: #d4bb8a;
+  color: #211f1c;
+  font-weight: 700;
+}
+
+/* Confirmation dialog text */
+:root[data-theme="dark"] .confirm-dialog h2 {
+  color: #f3efe7;
+}
+
+:root[data-theme="dark"] .confirm-dialog p {
+  color: #aaa49a;
+}
+
+/* Cancel button */
+:root[data-theme="dark"] .confirm-dialog .confirm-cancel {
+  background: #403b35;
+  color: #f3efe7;
+}
+
+/* Normal confirmation button */
+:root[data-theme="dark"] .confirm-dialog .confirm-accept {
+  background: #d4bb8a;
+  color: #211f1c;
+}
+
+/* Permanent deletion must remain red */
+:root[data-theme="dark"] .confirm-dialog .confirm-accept.destructive {
+  background: #b54545;
+  color: #ffffff;
+}
+
+/* ===== END: DARK THEME REFINEMENTS ===== */
+
+/* ===== START: RESPONSIVE TEXT SIZES ===== */
+
+/* Normal — existing GoldCheck typography */
+:root {
+  --gc-size-xs: 12px;
+  --gc-size-sm: 13px;
+  --gc-size-md: 14px;
+  --gc-size-base: 16px;
+  --gc-size-input: 17px;
+  --gc-size-title: 22px;
+  --gc-size-result: 32px;
+  --gc-size-spot: 34px;
+}
+
+/* Large */
+:root[data-text-size="large"] {
+  --gc-size-xs: 14px;
+  --gc-size-sm: 15px;
+  --gc-size-md: 16px;
+  --gc-size-base: 18px;
+  --gc-size-input: 19px;
+  --gc-size-title: 25px;
+  --gc-size-result: 36px;
+  --gc-size-spot: 38px;
+}
+
+/* Extra Large */
+:root[data-text-size="extra"] {
+  --gc-size-xs: 16px;
+  --gc-size-sm: 17px;
+  --gc-size-md: 18px;
+  --gc-size-base: 21px;
+  --gc-size-input: 22px;
+  --gc-size-title: 28px;
+  --gc-size-result: 40px;
+  --gc-size-spot: 42px;
+}
+
+/* General interface */
+body {
+  font-size: var(--gc-size-base);
+}
+
+h1, h2, h3 {
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  font-size: var(--gc-size-title);
+}
+
+label,
+.result-label,
+.collection-specs,
+.collection-number,
+.note,
+.price-source {
+  font-size: var(--gc-size-sm);
+}
+
+.line {
+  font-size: var(--gc-size-md);
+}
+
+.line span,
+.line strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Calculator */
+input,
+select {
+  font-size: var(--gc-size-input);
+}
+
+.big {
+  font-size: var(--gc-size-result);
+  overflow-wrap: anywhere;
+}
+
+#headerSpot {
+  font-size: var(--gc-size-spot);
+}
+
+#headerCurrency,
+.header-status {
+  font-size: var(--gc-size-sm);
+}
+
+.mode-btn,
+.nav-btn,
+.purchase-button {
+  font-size: var(--gc-size-base);
+}
+
+/* Collection */
+.collection-summary-text strong {
+  font-size: var(--gc-size-base);
+}
+
+.collection-status {
+  font-size: var(--gc-size-xs);
+}
+
+.collection-edit-button {
+  font-size: var(--gc-size-md);
+  min-height: 48px;
+}
+
+/* Settings */
+.appearance-options span,
+.setting-toggle strong {
+  font-size: var(--gc-size-base);
+}
+
+.setting-toggle small {
+  font-size: var(--gc-size-sm);
+}
+
+/* Confirmation dialogs */
+.confirm-dialog h2 {
+  font-size: var(--gc-size-title);
+}
+
+.confirm-dialog p {
+  font-size: var(--gc-size-base);
+}
+
+.confirm-dialog-actions button,
+.purchase-actions button {
+  font-size: var(--gc-size-md);
+}
+
+/* Make the fixed header respond to larger text */
+.top-shell {
+  overflow-wrap: anywhere;
+}
+
+.top-shell .app-header > div:first-child {
+  min-width: 0;
+}
+
+.spot-refresh {
+  flex-wrap: wrap;
+}
+
+/* ===== END: RESPONSIVE TEXT SIZES ===== */
+
+/* ===== START: COLLECTION ACTION LAYOUT ===== */
+
+.collection-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.collection-actions .collection-edit-button {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  min-height: 48px;
+  margin: 0;
+  white-space: normal;
+}
+
+/* Cancel any previous sibling-button spacing */
+.collection-actions .collection-edit-button
++ .collection-edit-button {
+  margin-left: 0;
+}
+
+/* ===== END: COLLECTION ACTION LAYOUT ===== */
+
+/* ===== START: CUSTOM CATEGORY ROWS ===== */
+
+.custom-category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border, #ddd);
+}
+
+.custom-category-row span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.custom-category-remove {
+  flex-shrink: 0;
+  width: auto;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #a63d3d;
+  color: white;
+  font-size: var(--gc-size-sm, 13px);
+}
+
+/* ===== END: CUSTOM CATEGORY ROWS ===== */
+
+/* ===== START: FIXED HEADER ALIGNMENT ===== */
+
+/* Spot price on the left, Settings on the right */
+.app-header {
+  flex-direction: row;
+}
+
+.app-header > div:first-child {
+  min-width: 0;
+  text-align: left;
+}
+
+.settings-button {
+  flex-shrink: 0;
+}
+
+/* ===== END: FIXED HEADER ALIGNMENT ===== */
+
+/* ===== START: SETTINGS GROUP HEADINGS ===== */
+
+.settings-group-title {
+  margin: 26px 0 12px;
+  padding: 0 2px;
+  font-size: var(--gc-size-base, 16px);
+  font-weight: 700;
+  color: var(--gc-muted);
+  letter-spacing: 0.3px;
+}
+
+#settingsPage h2 + .settings-group-title {
+  margin-top: 16px;
+}
+
+/* ===== START: SETTINGS ACCORDION STYLE ===== */
+
+.settings-group {
+  margin: 12px 0;
+  border: 1px solid var(--gc-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--gc-card);
+}
+
+.settings-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 16px;
+  background: var(--gc-control);
+  color: var(--gc-text);
+  font-size: var(--gc-size-base);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.settings-group summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Accordion arrow */
+.settings-group summary::after {
+  content: "⌄";
+  flex-shrink: 0;
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.settings-group[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.settings-group summary:focus-visible {
+  outline: 3px solid #b58c43;
+  outline-offset: -3px;
+}
+
+.settings-group-content {
+  padding: 14px;
+}
+
+/* Cards inside an expanded group */
+.settings-group-content > .card {
+  margin-bottom: 12px;
+  border: 1px solid var(--gc-border);
+}
+
+.settings-group-content > .card:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== END: SETTINGS ACCORDION STYLE ===== */
+
+/* ===== START: TRANSACTION ACTION COLORS ===== */
+
+/* Light mode */
+:root[data-theme="light"] .action-purchase {
+  background: #276749;
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .action-sale {
+  background: #8b6538;
+  color: #ffffff;
+}
+
+/* Dark mode */
+:root[data-theme="dark"] .action-purchase {
+  background: #67b58c;
+  color: #16271d;
+}
+
+:root[data-theme="dark"] .action-sale {
+  background: #d4bb8a;
+  color: #211f1c;
+}
+
+/* Keyboard accessibility */
+.action-purchase:focus-visible,
+.action-sale:focus-visible {
+  outline: 3px solid var(--gc-text);
+  outline-offset: 3px;
+}
+
+/* ===== END: TRANSACTION ACTION COLORS ===== */
+
+/* ===== START: COMPACT SHORT-SCREEN LAYOUT ===== */
+
+@media (max-height: 500px) and (max-width: 480px) {
+
+  .top-shell {
+    padding-top: max(6px, env(safe-area-inset-top));
+    padding-bottom: 6px;
+  }
+
+  .top-shell .app-header {
+    margin-bottom: 4px;
+  }
+
+  .app-header h1 {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  #headerSpot {
+    font-size: 26px;
+  }
+
+  #headerCurrency {
+    font-size: 12px;
+  }
+
+  .header-status {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .price-source {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .settings-button {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  .mode-btn {
+    min-height: 40px;
+    font-size: 15px;
+  }
+
+  .mode-switch {
+    padding: 4px;
+    margin-bottom: 0;
+  }
+
+  .bottom-nav {
+    padding-top: 5px;
+    padding-bottom: max(5px, env(safe-area-inset-bottom));
+  }
+
+  .nav-btn {
+    min-height: 42px;
+    font-size: 14px;
+  }
+
+}
+
+/* ===== END: COMPACT SHORT-SCREEN LAYOUT ===== */
+
+/* ===== START: LANDSCAPE LAYOUT ===== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+
+  main,
+  .top-shell,
+  .bottom-nav {
+    max-width: 680px;
+  }
+
+  .top-shell {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .top-shell .app-header {
+    margin-bottom: 4px;
+  }
+
+  .app-header h1 {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  #headerSpot {
+    font-size: 26px;
+  }
+
+  .header-status,
+  .price-source {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .mode-btn {
+    min-height: 36px;
+    font-size: 14px;
+  }
+
+  .mode-switch {
+    padding: 3px;
+  }
+
+  .bottom-nav {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .nav-btn {
+    min-height: 38px;
+    font-size: 13px;
+  }
+
+}
+
+/* ===== END: LANDSCAPE LAYOUT ===== */
+
+/* ===== START: BACKUP IMPORT BUTTON ===== */
+
+.backup-import-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.backup-import-button:focus-within {
+  outline: 3px solid #b58c43;
+  outline-offset: 2px;
+}
+
+/* ===== END: BACKUP IMPORT BUTTON ===== */
+
 </style>
 </head>
 <body>
 
 <main>
-  <h1>GoldCheck</h1>
-  <div class="sub">Gold premium calculator · v0.3</div>
 
-  <div class="card">
-    <strong>Currency</strong>
-    <select id="currency">
-      <option value="SAR">SAR — Saudi Riyal</option>
-      <option value="USD">USD — US Dollar</option>
-      <option value="PHP">PHP — Philippine Peso</option>
-      <option value="EUR">EUR — Euro</option>
-      <option value="GBP">GBP — British Pound</option>
-      <option value="AED">AED — UAE Dirham</option>
-      <option value="KWD">KWD — Kuwaiti Dinar</option>
-      <option value="QAR">QAR — Qatari Riyal</option>
-      <option value="BHD">BHD — Bahraini Dinar</option>
-      <option value="OMR">OMR — Omani Rial</option>
-      <option value="INR">INR — Indian Rupee</option>
-    </select>
-  </div>
-  
-  <div class="card">
-    <strong>Gold spot price</strong>
+<div class="top-shell">
+  <div class="app-header">
+  <div>
+    <h1>GoldCheck</h1>
 
-    <label id="spotLabel">24K gold (SAR / gram)</label>
-    <input id="spot" type="number" step="any"
-      placeholder="Loading price...">
-
-    <button class="refresh" id="refreshBtn"
-      onclick="refreshPrices()">
-      Refresh Gold Price
+    <button id="spotRefresh" class="spot-refresh"
+            onclick="refreshPrices()"
+            title="Tap to refresh gold price">
+      <span id="headerSpot">—</span>
+      <span id="headerCurrency">SAR/g</span>
     </button>
 
-    <p class="note" id="priceStatus">
-      Loading saved prices...
-    </p>
-    <p class="note" id="fxStatus"></p>
-    <p class="note">
-      You can manually edit the spot price.
-      Refresh replaces manual entries with the latest
-      available quote.
-    </p>
+    <div id="headerStatus" class="header-status">
+      Tap price to refresh
+    </div>
+<div class="price-source">
+  Gold price: Gold-API.com · Indicative
+</div>
+
   </div>
+
+  <button
+    id="settingsButton"
+    class="settings-button"
+    onclick="openSettings()"
+    aria-label="Open settings"
+    title="Settings">
+    ⚙
+  </button>
+</div>
+
+<!-- Buy / Sell selector -->
+<div class="mode-switch" id="modeSwitch">
+  <button id="buyMode" class="mode-btn active"
+          onclick="setMode('buy')">
+    Buy
+  </button>
+
+  <button id="sellMode" class="mode-btn"
+          onclick="setMode('sell')">
+    Sell
+
+  </button>
+</div>
+
+</div>
+<!-- ===== END: FIXED TOP HEADER ===== -->
+
+<section id="calculatorPage" class="page active">
+
+
+<!-- Select an existing item when selling -->
+<div id="sellSourceBox" class="card" hidden>
+  <label for="sellSource">Select item to sell</label>
+
+  <select id="sellSource"
+          onchange="changeSellSource()">
+    <option value="">Manual item</option>
+  </select>
+
+  <p id="sellItemDetails" class="note"></p>
+</div>
 
 <div class="tabs">
     <button id="jewelryTab" class="active"
@@ -165,9 +1440,9 @@ button {
     <input id="price" type="number" step="any"
       placeholder="Enter selling price">
 
-    <label>Total weight (grams)</label>
-    <input id="weight" type="number" step="any"
-      placeholder="Enter weight">
+    <label id="weightLabel">Total weight (grams)</label>
+<input id="weight" type="number" step="any"
+  placeholder="Enter weight">
 
     <label>Gold fineness</label>
     <select id="purity">
@@ -182,8 +1457,11 @@ button {
     </select>
   </div>
 
-  <div class="card">
-    <div class="result-label">Premium above gold spot</div>
+<div id="sellComparisonPosition"></div>
+<div class="card">
+    <div class="result-label" id="premiumLabel">
+  Estimated premium above spot
+</div>
     <div class="big" id="premiumPct">—</div>
 
     <div class="line">
@@ -207,16 +1485,1335 @@ button {
     </div>
   </div>
 
+
+<!-- ===== START: SELL COMPARISON PANEL ===== -->
+
+<div id="sellComparison" class="card" hidden>
+  <div class="result-label">
+    Estimated gain / loss
+  </div>
+
+  <div class="big" id="saleGainLoss">—</div>
+
+  <p id="saleComparisonNote" class="note"></p>
+
+  <div class="line">
+    <span>Original purchase price</span>
+    <strong id="originalPrice">—</strong>
+  </div>
+
+  <div class="line">
+    <span>Purchase date</span>
+    <strong id="originalDate">—</strong>
+  </div>
+
+  <div class="line">
+    <span>Buyer's offer</span>
+    <strong id="comparisonOffer">—</strong>
+  </div>
+</div>
+
+<!-- ===== END: SELL COMPARISON PANEL ===== -->
+
+<!-- ===== START: RECORD SALE ACTION ===== -->
+<div id="saleAction" hidden>
+  <button class="purchase-button action-sale"
+          onclick="openSale()">
+    Record Sale
+  </button>
+</div>
+<!-- ===== END: RECORD SALE ACTION ===== -->
+
+<!-- ===== START: SALE CONFIRMATION ===== -->
+
+<div id="saleConfirmation"
+     class="card purchase-confirmation" hidden>
+
+  <h2>Confirm Sale</h2>
+
+  <p id="saleSummary"></p>
+
+  <div class="line">
+    <span>Original purchase</span>
+    <strong id="saleOriginalPrice">—</strong>
+  </div>
+
+  <div class="line">
+    <span>Sale price</span>
+    <strong id="saleFinalPrice">—</strong>
+  </div>
+
+  <div class="line">
+    <span>Gain / loss</span>
+    <strong id="saleFinalGainLoss">—</strong>
+  </div>
+
+  <label for="saleDate">Sale date</label>
+  <input type="date" id="saleDate">
+  <p class="note date-format-hint"></p>
+
+  <label for="saleNotes">Notes (optional)</label>
+  <input type="text" id="saleNotes"
+         placeholder="Buyer or transaction details">
+
+  <p class="note">
+    Confirming this sale will mark the item as Sold
+    while preserving its purchase history.
+  </p>
+
+  <div class="purchase-actions">
+    <button onclick="cancelSale()">
+      Cancel
+    </button>
+
+    <button class="confirm"
+            onclick="saveSale()">
+      Confirm Sale
+    </button>
+  </div>
+</div>
+
+<!-- ===== END: SALE CONFIRMATION ===== -->
+
+<!-- Purchase action -->
+<div id="purchaseAction">
+  <button class="purchase-button action-purchase"
+        onclick="openPurchase()">
+  Purchase
+</button>
+</div>
+
+<!-- Purchase confirmation -->
+<div id="purchaseConfirmation"
+     class="card purchase-confirmation" hidden>
+
+  <h2>Confirm Purchase</h2>
+
+  <p id="purchaseSummary"></p>
+
+  <label for="purchaseCategory">Item category</label>
+  <select id="purchaseCategory">
+    <option>Ring</option>
+    <option>Necklace</option>
+    <option>Bracelet</option>
+    <option>Earrings</option>
+    <option>Pendant</option>
+    <option>Other</option>
+    <option>Bullion Bar</option>
+    <option>Coin</option>
+  </select>
+
+  <label for="purchaseDate">Purchase date</label>
+  <input type="date" id="purchaseDate">
+  <p class="note date-format-hint"></p>
+
+  <label for="purchaseNotes">Notes (optional)</label>
+  <input type="text" id="purchaseNotes"
+         placeholder="Description or store">
+
+  <p class="note">
+    The current gold spot price will be
+    saved with this purchase.
+    For older purchases, verify the historical
+    price before recording.
+  </p>
+
+  <div class="purchase-actions">
+    <button onclick="cancelPurchase()">
+      Cancel
+    </button>
+    <button class="confirm"
+            onclick="savePurchase()">
+      Save Purchase
+    </button>
+  </div>
+</div>
+
+
   <p class="note">
     Theoretical gold content value only.
     Taxes, workmanship, gemstones and other components
     are not separately deducted.
     Currency rates are indicative daily reference rates.
   </p>
+</section>
+
+
+<!-- Collection page -->
+
+
+<section id="collectionPage" class="page">
+  <h2>My Collection</h2>
+
+  <!-- ===== START: COLLECTION FILTERS ===== -->
+  <div class="tabs collection-filters">
+    <button class="active" data-filter="all"
+            onclick="setCollectionFilter('all')">
+      All
+    </button>
+    <button data-filter="owned"
+            onclick="setCollectionFilter('owned')">
+      Owned
+    </button>
+    <button data-filter="sold"
+            onclick="setCollectionFilter('sold')">
+      Sold
+    </button>
+
+<button data-filter="trash"
+        onclick="setCollectionFilter('trash')">
+  Trash
+</button>
+
+  </div>
+  <!-- ===== END: COLLECTION FILTERS ===== -->
+
+  <div id="collectionItems">
+
+    <p>No purchases recorded yet.</p>
+  </div>
+
+<!-- ===== START: EDIT RECORD FORM ===== -->
+
+<div id="editRecordPanel" class="card" hidden>
+  <h2>Edit Record</h2>
+
+  <label for="editCategory">Item category</label>
+  <select id="editCategory">
+    <option>Ring</option>
+    <option>Necklace</option>
+    <option>Bracelet</option>
+    <option>Earrings</option>
+    <option>Pendant</option>
+    <option>Other</option>
+    <option>Bullion Bar</option>
+    <option>Coin</option>
+  </select>
+
+  <label for="editWeight">Weight (grams)</label>
+  <input id="editWeight" type="number" step="any">
+
+  <label for="editPurity">Gold fineness</label>
+  <select id="editPurity">
+    <option value="1">24K — Pure gold</option>
+    <option value="0.9999">999.9</option>
+    <option value="0.999">999</option>
+    <option value="0.9166666667">22K — 916.7</option>
+    <option value="0.875">21K — 875</option>
+    <option value="0.75">18K — 750</option>
+    <option value="0.585">14K — 585</option>
+    <option value="0.4166666667">10K — 416.7</option>
+  </select>
+
+  <label for="editPrice">Purchase price</label>
+  <input id="editPrice" type="number" step="any">
+
+  <label for="editSpot">Gold price at purchase (24K / gram)</label>
+  <input id="editSpot" type="number" step="any">
+
+  <label for="editDate">Purchase date</label>
+<input id="editDate" type="date">
+<p class="note date-format-hint"></p>
+
+  <label for="editNotes">Purchase notes</label>
+  <input id="editNotes" type="text">
+
+  <!-- Visible only for sold records -->
+  <div id="editSaleFields" hidden>
+    <hr class="collection-divider">
+
+    <h3>Sale Details</h3>
+
+    <label for="editSalePrice">Sale price</label>
+    <input id="editSalePrice" type="number" step="any">
+
+    <label for="editSaleDate">Sale date</label>
+    <input id="editSaleDate" type="date">
+    <p class="note date-format-hint"></p>
+
+    <label for="editSaleNotes">Sale notes</label>
+    <input id="editSaleNotes" type="text">
+  </div>
+
+  <p class="note" id="editCurrencyNote"></p>
+
+  <div class="purchase-actions">
+    <button onclick="cancelEditRecord()">Cancel</button>
+    <button class="confirm" onclick="saveEditRecord()">
+      Save Changes
+    </button>
+  </div>
+</div>
+
+<!-- ===== END: EDIT RECORD FORM ===== -->
+
+</section>
+
+
+<!-- Settings page -->
+<section id="settingsPage" class="page">
+  <div class="card">
+    <h2>Settings</h2>
+
+    <!-- ===== START: SETTINGS GROUP — GOLD ===== -->
+
+<!-- ===== START: GOLD SETTINGS ACCORDION ===== -->
+
+<details class="settings-group" name="goldcheck-settings">
+  <summary>Gold & Calculator</summary>
+  <div class="settings-group-content">
+
+
+    <div class="card">
+      <strong>Currency</strong>
+      <select id="currency">
+       <option value="SAR">SAR — Saudi Riyal</option>
+       <option value="USD">USD — US Dollar</option>
+       <option value="PHP">PHP — Philippine Peso</option>
+       <option value="EUR">EUR — Euro</option>
+       <option value="GBP">GBP — British Pound</option>
+       <option value="AED">AED — UAE Dirham</option>
+       <option value="KWD">KWD — Kuwaiti Dinar</option>
+       <option value="QAR">QAR — Qatari Riyal</option>
+       <option value="BHD">BHD — Bahraini Dinar</option>
+       <option value="OMR">OMR — Omani Rial</option>
+       <option value="INR">INR — Indian Rupee</option>
+      </select>
+    </div>
+
+    <!-- ===== START: WEIGHT UNIT SETTINGS ===== -->
+
+<div class="card weight-unit-settings">
+  <strong>Weight Unit</strong>
+
+  <p class="note">
+    Choose how weights are entered and displayed.
+    Saved weights are always stored in grams.
+  </p>
+
+  <div class="appearance-options">
+
+    <label>
+      <input type="radio"
+             name="weightUnit"
+             value="g"
+             checked>
+      <span>Grams (g)</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="weightUnit"
+             value="ozt">
+      <span>Troy ounces (oz t)</span>
+    </label>
+
+  </div>
+</div>
+
+<!-- ===== END: WEIGHT UNIT SETTINGS ===== -->
+
+<div class="card">
+  <strong>Manual gold price</strong>
+
+  <label id="spotLabel">
+    24K gold (SAR / gram)
+  </label>
+
+  <input
+    id="spot"
+    type="number"
+    step="any"
+    placeholder="Enter manual spot price">
+
+  <p class="note">
+    Manually entered prices are used until the next
+    successful refresh or currency change.
+  </p>
+
+  <p id="priceStatus" class="note"></p>
+  <p id="fxStatus" class="note"></p>
+  </div>
+
+  </div>
+</details>
+
+<!-- ===== END: GOLD SETTINGS ACCORDION ===== -->
+
+  <!-- ===== START: SETTINGS GROUP — DISPLAY ===== -->
+
+<!-- ===== START: DISPLAY SETTINGS ACCORDION ===== -->
+
+<details class="settings-group" name="goldcheck-settings">
+  <summary>Display & Accessibility</summary>
+  <div class="settings-group-content">
+
+
+<!-- ===== START: APPEARANCE SETTINGS ===== -->
+
+<div class="card appearance-settings">
+  <strong>Appearance</strong>
+
+  <p class="note">
+    Choose how GoldCheck looks on your device.
+  </p>
+
+  <div class="appearance-options">
+
+    <label>
+      <input type="radio"
+             name="appearance"
+             value="system"
+             checked>
+      <span>System Default</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="appearance"
+             value="light">
+      <span>Light</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="appearance"
+             value="dark">
+      <span>Dark</span>
+    </label>
+
+  </div>
+</div>
+
+<!-- ===== END: APPEARANCE SETTINGS ===== -->
+
+<!-- ===== START: TEXT SIZE SETTINGS ===== -->
+
+<div class="card text-size-settings">
+  <strong>Text Size</strong>
+
+  <p class="note">
+    Adjust the size of text and numbers throughout GoldCheck.
+  </p>
+
+  <div class="appearance-options">
+
+    <label>
+      <input type="radio"
+             name="textSize"
+             value="normal"
+             checked>
+      <span>Normal (Default)</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="textSize"
+             value="large">
+      <span>Large</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="textSize"
+             value="extra">
+      <span>Extra Large</span>
+    </label>
+
+  </div>
+</div>
+
+<!-- ===== END: TEXT SIZE SETTINGS ===== -->
+
+<!-- ===== START: DATE FORMAT SETTINGS ===== -->
+
+<div class="card date-format-settings">
+  <strong>Date Format</strong>
+
+  <p class="note">
+    Choose how purchase and sale dates are displayed.
+  </p>
+
+  <div class="appearance-options">
+
+    <label>
+      <input type="radio"
+             name="dateFormat"
+             value="ymd"
+             checked>
+      <span>YYYY-MM-DD (Default)</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="dateFormat"
+             value="dmy">
+      <span>DD/MM/YYYY</span>
+    </label>
+
+    <label>
+      <input type="radio"
+             name="dateFormat"
+             value="mdy">
+      <span>MM/DD/YYYY</span>
+    </label>
+
+  </div>
+</div>
+
+<!-- ===== END: DATE FORMAT SETTINGS ===== -->
+
+
+  </div>
+</details>
+
+<!-- ===== END: DISPLAY SETTINGS ACCORDION ===== -->
+
+<!-- ===== START: SETTINGS GROUP — COLLECTION ===== -->
+
+<!-- ===== START: COLLECTION SETTINGS ACCORDION ===== -->
+
+<details class="settings-group" name="goldcheck-settings">
+  <summary>Collection</summary>
+  <div class="settings-group-content">
+
+
+<!-- ===== START: COLLECTION DISPLAY SETTINGS ===== -->
+
+<div class="card">
+  <strong>Collection Display</strong>
+
+  <label class="setting-toggle">
+    <span>
+      <strong>Auto-collapse items</strong>
+      <small>
+        Collapse expanded items when leaving Collection
+        or changing filters.
+      </small>
+    </span>
+
+    <input type="checkbox"
+           id="autoCollapseSetting"
+           checked>
+  </label>
+</div>
+
+<!-- ===== END: COLLECTION DISPLAY SETTINGS ===== -->
+
+<!-- ===== START: CUSTOM CATEGORY SETTINGS ===== -->
+
+<div class="card">
+  <strong>Custom Categories</strong>
+
+  <p class="note">
+    Create your own categories for Collection items.
+    Default categories will remain available.
+  </p>
+
+  <label for="newCategory">New category</label>
+  <input
+    type="text"
+    id="newCategory"
+    maxlength="30"
+    placeholder="e.g. Anklet">
+
+  <button
+    type="button"
+    id="addCategoryButton"
+    class="purchase-button"
+    onclick="addCustomCategory()">
+    Add Category
+  </button>
+
+  <p class="note" id="categoryMessage"></p>
+
+  <strong>Your custom categories</strong>
+  <div id="customCategoryList">
+    <p class="note">No custom categories added yet.</p>
+  </div>
+</div>
+
+<!-- ===== END: CUSTOM CATEGORY SETTINGS ===== -->
+
+<!-- ===== START: BACKUP SETTINGS ===== -->
+
+<div class="card">
+  <strong>Backup & Restore</strong>
+
+  <p class="note">
+    Save your Collection records and preferences
+    to a file for safekeeping or transferring
+    to another device.
+  </p>
+
+  <button
+    type="button"
+    class="purchase-button"
+    onclick="exportBackup()">
+    Export Backup
+  </button>
+
+  <p class="note">
+    Exporting does not change or remove
+    your existing data.
+  </p>
+
+<!-- ===== START: BACKUP IMPORT INTERFACE ===== -->
+
+<label for="backupFile"
+       class="purchase-button backup-import-button">
+  Import Backup
+</label>
+
+<input
+  type="file"
+  id="backupFile"
+  accept=".json,application/json"
+  onchange="previewBackupImport()"
+  hidden>
+
+<p class="note">
+  Select a GoldCheck JSON backup to preview
+  its contents before restoring.
+</p>
+
+<div id="backupImportPreview" hidden>
+  <hr class="collection-divider">
+
+  <strong>Backup Preview</strong>
+
+  <p id="backupImportSummary" class="note"></p>
+
+<button
+  type="button"
+  class="purchase-button"
+  onclick="restoreBackup()">
+  Restore This Backup
+</button>
+
+<p class="note">
+  Warning: Restoring replaces your current Collection,
+  custom categories, and preferences.
+</p>
+
+</div>
+
+<!-- ===== END: BACKUP IMPORT INTERFACE ===== -->
+
+</div>
+
+<!-- ===== END: BACKUP SETTINGS ===== -->
+
+  </div>
+</details>
+
+<!-- ===== END: COLLECTION SETTINGS ACCORDION ===== -->
+
+  </div>
+</section>
+
+<!-- Bottom navigation -->
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="nav-btn active"
+          data-page="calculator"
+          onclick="showPage('calculator')">
+    Calculator
+  </button>
+
+  <button class="nav-btn"
+          data-page="collection"
+          onclick="showPage('collection')">
+    Collection
+  </button>
+</nav>
+
+
+
 </main>
 
+<!-- ===== START: GOLDCHECK CONFIRMATION DIALOG ===== -->
+
+<dialog id="confirmDialog" class="confirm-dialog">
+  <h2 id="confirmTitle">Confirm Action</h2>
+
+  <p id="confirmMessage"></p>
+
+  <form method="dialog" class="confirm-dialog-actions">
+    <button type="submit" value="cancel"
+            class="confirm-cancel">
+      Cancel
+    </button>
+
+    <button type="submit" value="confirm"
+            id="confirmActionButton"
+            class="confirm-accept">
+      Confirm
+    </button>
+  </form>
+</dialog>
+
+<!-- ===== END: GOLDCHECK CONFIRMATION DIALOG ===== -->
+
 <script>
+
+// ===== START: COLLECTION AUTO-COLLAPSE SETTING =====
+
+const AUTO_COLLAPSE_KEY = "goldcheck_auto_collapse";
+
+let autoCollapseCollection =
+  localStorage.getItem(AUTO_COLLAPSE_KEY) !== "false";
+
+const autoCollapseInput =
+  document.getElementById("autoCollapseSetting");
+
+autoCollapseInput.checked = autoCollapseCollection;
+
+autoCollapseInput.addEventListener("change", () => {
+  autoCollapseCollection = autoCollapseInput.checked;
+
+  localStorage.setItem(
+    AUTO_COLLAPSE_KEY,
+    String(autoCollapseCollection)
+  );
+});
+
+// ===== END: COLLECTION AUTO-COLLAPSE SETTING =====
+
+// ===== START: APPEARANCE THEME LOGIC =====
+
+const APPEARANCE_KEY = "goldcheck_appearance";
+
+let appearanceMode =
+  localStorage.getItem(APPEARANCE_KEY) || "system";
+
+if (!["system", "light", "dark"].includes(appearanceMode)) {
+  appearanceMode = "system";
+}
+
+const systemTheme = window.matchMedia(
+  "(prefers-color-scheme: dark)"
+);
+
+function applyAppearance() {
+  const activeTheme =
+    appearanceMode === "system"
+      ? (systemTheme.matches ? "dark" : "light")
+      : appearanceMode;
+
+  document.documentElement.dataset.theme = activeTheme;
+
+  document.querySelectorAll(
+    'input[name="appearance"]'
+  ).forEach(input => {
+    input.checked = input.value === appearanceMode;
+  });
+
+  document.querySelector('meta[name="theme-color"]')
+    .setAttribute(
+      "content",
+      activeTheme === "dark" ? "#211f1c" : "#292720"
+    );
+}
+
+document.querySelectorAll(
+  'input[name="appearance"]'
+).forEach(input => {
+  input.addEventListener("change", () => {
+    if (!input.checked) return;
+
+    appearanceMode = input.value;
+
+    localStorage.setItem(
+      APPEARANCE_KEY,
+      appearanceMode
+    );
+
+    applyAppearance();
+  });
+});
+
+// Respond when the device theme changes.
+systemTheme.addEventListener("change", () => {
+  if (appearanceMode === "system") {
+    applyAppearance();
+  }
+});
+
+applyAppearance();
+
+// ===== END: APPEARANCE THEME LOGIC =====
+
+// ===== START: TEXT SIZE SETTING LOGIC =====
+
+const TEXT_SIZE_KEY = "goldcheck_text_size";
+
+let textSizeMode =
+  localStorage.getItem(TEXT_SIZE_KEY) || "normal";
+
+if (!["normal", "large", "extra"].includes(textSizeMode)) {
+  textSizeMode = "normal";
+}
+
+function applyTextSize() {
+  document.documentElement.dataset.textSize = textSizeMode;
+
+  document.querySelectorAll(
+    'input[name="textSize"]'
+  ).forEach(input => {
+    input.checked = input.value === textSizeMode;
+  });
+
+  // Recalculate fixed header spacing after resizing.
+  if (typeof updateTopSpacing === "function") {
+    updateTopSpacing();
+  }
+}
+
+document.querySelectorAll(
+  'input[name="textSize"]'
+).forEach(input => {
+  input.addEventListener("change", () => {
+    if (!input.checked) return;
+
+    textSizeMode = input.value;
+
+    localStorage.setItem(
+      TEXT_SIZE_KEY,
+      textSizeMode
+    );
+
+    applyTextSize();
+  });
+});
+
+applyTextSize();
+
+// ===== END: TEXT SIZE SETTING LOGIC =====
+
+let lastMainPage = "calculator";
+
+// ===== START: FIXED HEADER SPACING =====
+
+function updateTopSpacing() {
+  const shell = document.querySelector(".top-shell");
+
+  if (!shell) return;
+
+  const height = shell.getBoundingClientRect().height;
+
+  document.documentElement.style.setProperty(
+    "--top-space",
+    (height + 16) + "px"
+  );
+}
+
+window.addEventListener("resize", updateTopSpacing);
+
+if ("ResizeObserver" in window) {
+  const headerObserver = new ResizeObserver(updateTopSpacing);
+  headerObserver.observe(document.querySelector(".top-shell"));
+}
+
+// ===== END: FIXED HEADER SPACING =====
+
+function showPage(page) {
+  const pages = ["calculator", "collection", "settings"];
+
+  if (!pages.includes(page)) return;
+
+// ===== START: RESET SETTINGS ON EXIT =====
+
+const leavingSettings =
+  page !== "settings" &&
+  el("settingsPage").classList.contains("active");
+
+if (leavingSettings) {
+  // Collapse all Settings groups when leaving.
+const groups =
+  document.querySelectorAll("#settingsPage .settings-group");
+
+groups.forEach(group => {
+  group.open = false;
+});
+
+  // Clear the selected import file and preview.
+  pendingBackupImport = null;
+
+  el("backupFile").value = "";
+  el("backupImportPreview").hidden = true;
+  el("backupImportSummary").textContent = "";
+}
+
+// ===== END: RESET SETTINGS ON EXIT =====
+
+  // Cancel unsaved Collection edits when leaving Collection.
+if (page !== "collection" && editingRecordId !== null) {
+  cancelEditRecord();
+}
+
+// Respect the user's Auto-collapse preference.
+const leavingCollection =
+  document.getElementById("collectionPage")
+    .classList.contains("active") &&
+  page !== "collection";
+
+if (leavingCollection && autoCollapseCollection) {
+  expandedCollectionId = null;
+}
+
+
+// Show Buy/Sell only on Calculator
+document.getElementById("modeSwitch").hidden =
+  page !== "calculator";
+
+updateTopSpacing();
+
+  if (page !== "settings") {
+    lastMainPage = page;
+  }
+
+  pages.forEach(name => {
+    const section = document.getElementById(name + "Page");
+    section.classList.toggle("active", name === page);
+  });
+
+  // Refresh Collection's expanded/collapsed display.
+if (page === "collection") {
+  renderCollection();
+}
+
+  document.querySelectorAll(".nav-btn").forEach(button => {
+    const active = button.dataset.page === page;
+
+    button.classList.toggle("active", active);
+
+    if (active) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
+
+  // Hide bottom navigation while viewing Settings
+  document.querySelector(".bottom-nav").style.display =
+    page === "settings" ? "none" : "flex";
+
+  // Toggle Settings / Back button
+  const settingsButton = document.getElementById("settingsButton");
+
+  settingsButton.textContent = page === "settings" ? "←" : "⚙";
+  settingsButton.setAttribute(
+    "aria-label",
+    page === "settings" ? "Back" : "Open settings"
+  );
+}
+
+/* ===== START: HEADER TAP TO REFRESH ===== */
+
+document.querySelector(".app-header")
+  .addEventListener("click", event => {
+
+    // The Settings button keeps its own action.
+    if (event.target.closest("#settingsButton")) {
+      return;
+    }
+
+    // The price button already calls refreshPrices().
+    if (event.target.closest("#spotRefresh")) {
+      return;
+    }
+
+    refreshPrices();
+  });
+
+/* ===== END: HEADER TAP TO REFRESH ===== */
+
+function openSettings() {
+  const settingsVisible =
+    document.getElementById("settingsPage")
+      .classList.contains("active");
+
+  showPage(settingsVisible ? lastMainPage : "settings");
+}
+
 const OUNCE_GRAMS = 31.1034768;
+
+// ===== START: WEIGHT UNIT CONVERSION =====
+
+const WEIGHT_UNIT_KEY = "goldcheck_weight_unit";
+
+let weightUnit =
+  localStorage.getItem(WEIGHT_UNIT_KEY) === "ozt"
+    ? "ozt"
+    : "g";
+
+// Convert displayed input to internal grams.
+function weightToGrams(value) {
+  const number = Number(value);
+  return weightUnit === "ozt"
+    ? number * OUNCE_GRAMS
+    : number;
+}
+
+// Convert stored grams to the selected display unit.
+function gramsToDisplay(value) {
+  if (value === "" || value === null ||
+      value === undefined) return "";
+
+  const grams = Number(value);
+
+  if (!Number.isFinite(grams)) return "";
+
+  if (weightUnit === "ozt") {
+    return (grams / OUNCE_GRAMS).toFixed(6);
+  }
+
+  return String(value);
+}
+
+function updateWeightUnit() {
+  document.querySelectorAll(
+    'input[name="weightUnit"]'
+  ).forEach(input => {
+    input.checked = input.value === weightUnit;
+  });
+}
+
+document.querySelectorAll(
+  'input[name="weightUnit"]'
+).forEach(input => {
+  input.addEventListener("change", () => {
+    if (!input.checked) return;
+
+
+weightUnit = input.value;
+
+localStorage.setItem(
+  WEIGHT_UNIT_KEY, weightUnit
+);
+
+updateWeightUnit();
+showItem();
+
+// Refresh all weight descriptions.
+refreshSellChoices();
+renderCollection();
+
+  });
+});
+
+updateWeightUnit();
+
+// ===== START: COLLECTION KARAT DISPLAY =====
+
+function formatCollectionKarat(purity) {
+  const value = Number(purity);
+
+  const knownPurities = [
+    [1, "24K"],
+    [0.9999, "999.9"],
+    [0.999, "999"],
+    [0.9166666667, "22K"],
+    [0.875, "21K"],
+    [0.75, "18K"],
+    [0.585, "14K"],
+    [0.4166666667, "10K"]
+  ];
+
+  const match = knownPurities.find(
+    ([number]) => Math.abs(value - number) < 0.00001
+  );
+
+  return match
+    ? match[1]
+    : `Fineness ${(value * 1000).toFixed(1)}`;
+}
+
+// ===== END: COLLECTION KARAT DISPLAY =====
+
+function formatWeight(grams) {
+  const value = Number(grams);
+
+  if (!Number.isFinite(value)) return "—";
+
+  if (weightUnit === "ozt") {
+    return (value / OUNCE_GRAMS).toFixed(6) + " oz t";
+  }
+
+  return format(value) + " g";
+}
+
+// ===== END: WEIGHT UNIT CONVERSION =====
+
+// ===== START: CUSTOM CATEGORY LOGIC =====
+
+const CUSTOM_CATEGORY_KEY = "goldcheck_custom_categories";
+const MAX_CUSTOM_CATEGORIES = 5;
+const defaultCategories = [
+  "Ring", "Necklace", "Bracelet", "Earrings",
+  "Pendant", "Other", "Bullion Bar", "Coin"
+];
+
+let customCategories = [];
+
+try {
+  const saved = JSON.parse(
+    localStorage.getItem(CUSTOM_CATEGORY_KEY) || "[]"
+  );
+
+  if (Array.isArray(saved)) {
+    customCategories = saved.filter(
+      name => typeof name === "string"
+    );
+  }
+} catch (error) {
+  console.warn("Could not load custom categories", error);
+}
+
+
+// ===== START: CUSTOM CATEGORY LIST =====
+
+function renderCustomCategories() {
+  const container = el("customCategoryList");
+  container.replaceChildren();
+
+  el("categoryMessage").textContent =
+    `${customCategories.length} / ${MAX_CUSTOM_CATEGORIES} custom categories`;
+
+  if (customCategories.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "note";
+    empty.textContent = "No custom categories added yet.";
+    container.appendChild(empty);
+    return;
+  }
+
+  customCategories.forEach(name => {
+    const row = document.createElement("div");
+    row.className = "custom-category-row";
+
+    const label = document.createElement("span");
+    label.textContent = name;
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.textContent = "Remove";
+    removeButton.className = "custom-category-remove";
+
+    removeButton.addEventListener("click", () => {
+      removeCustomCategory(name);
+    });
+
+    row.append(label, removeButton);
+    container.appendChild(row);
+  });
+}
+
+// ===== START: REMOVE CUSTOM CATEGORY =====
+
+function removeCustomCategory(name) {
+  const confirmed = window.confirm(
+    `Remove "${name}" from custom categories?\n\n` +
+    "Existing Collection records will keep their categories."
+  );
+
+  if (!confirmed) return;
+
+  const updated = customCategories.filter(
+    category => category !== name
+  );
+
+  try {
+    localStorage.setItem(
+      CUSTOM_CATEGORY_KEY,
+      JSON.stringify(updated)
+    );
+  } catch (error) {
+    console.error("Category removal failed:", error);
+    return;
+  }
+
+  customCategories = updated;
+
+  updateCategoryDropdowns();
+  renderCustomCategories();
+}
+
+// ===== END: REMOVE CUSTOM CATEGORY =====
+
+// ===== END: CUSTOM CATEGORY LIST =====
+
+
+function addCustomCategory() {
+  const input = el("newCategory");
+  const name = input.value.trim().replace(/\s+/g, " ");
+
+  if (!name || name.length > 30) {
+    el("categoryMessage").textContent =
+      "Enter a category name up to 30 characters.";
+    return;
+  }
+
+  const existing = [
+    ...defaultCategories,
+    ...customCategories
+  ];
+
+  if (existing.some(
+    item => item.toLowerCase() === name.toLowerCase()
+  )) {
+    el("categoryMessage").textContent =
+      "This category already exists.";
+    return;
+  }
+  if (customCategories.length >= MAX_CUSTOM_CATEGORIES) {
+  el("categoryMessage").textContent =
+    "Maximum of 5 custom categories reached.";
+  return;
+}
+  const updated = [...customCategories, name];
+
+  try {
+    localStorage.setItem(
+      CUSTOM_CATEGORY_KEY,
+      JSON.stringify(updated)
+    );
+  } catch (error) {
+    console.error("Category saving failed:", error);
+    el("categoryMessage").textContent =
+      "Could not save category.";
+    return;
+  }
+
+  customCategories = updated;
+  input.value = "";
+  updateCategoryDropdowns();
+
+  el("categoryMessage").textContent =
+    "Category added successfully.";
+
+  renderCustomCategories();
+}
+
+function updateCategoryDropdowns() {
+  const categories = [
+    ...defaultCategories,
+    ...customCategories
+  ];
+
+  const dropdownIds = [
+    "purchaseCategory",
+    "editCategory"
+  ];
+
+  dropdownIds.forEach(id => {
+    const select = el(id);
+    if (!select) return;
+
+    // Remember the current selection.
+    const previous = select.value;
+
+    // Rebuild the dropdown.
+    select.replaceChildren();
+
+    categories.forEach(name => {
+      select.add(new Option(name, name));
+    });
+
+    // Restore the previous selection if available.
+    if (categories.includes(previous)) {
+      select.value = previous;
+    }
+  });
+}
+
+// ===== END: CUSTOM CATEGORY LOGIC =====
+
+// ===== START: DATE FORMAT LOGIC =====
+
+const DATE_FORMAT_KEY = "goldcheck_date_format";
+
+let dateFormat =
+  localStorage.getItem(DATE_FORMAT_KEY) || "ymd";
+
+if (!["ymd", "dmy", "mdy"].includes(dateFormat)) {
+  dateFormat = "ymd";
+}
+
+// Format YYYY-MM-DD dates for display only.
+// Stored dates remain unchanged.
+function formatDate(dateString) {
+  if (!dateString) return "—";
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+
+  if (!match) return dateString;
+
+  const [, year, month, day] = match;
+
+  if (dateFormat === "dmy") {
+    return `${day}/${month}/${year}`;
+  }
+
+  if (dateFormat === "mdy") {
+    return `${month}/${day}/${year}`;
+  }
+
+  return dateString;
+}
+
+function applyDateFormat() {
+  document.querySelectorAll(
+    'input[name="dateFormat"]'
+  ).forEach(input => {
+    input.checked = input.value === dateFormat;
+  });
+  updateDateFormatHints();
+}
+
+document.querySelectorAll(
+  'input[name="dateFormat"]'
+).forEach(input => {
+  input.addEventListener("change", () => {
+    if (!input.checked) return;
+
+    dateFormat = input.value;
+
+    localStorage.setItem(
+      DATE_FORMAT_KEY,
+      dateFormat
+    );
+
+    applyDateFormat();
+    renderCollection();
+    updateSellComparison();
+    applySellSource();
+  });
+});
+
+applyDateFormat();
+
+function updateDateFormatHints() {
+  const labels = {
+    ymd: "YYYY-MM-DD",
+    dmy: "DD/MM/YYYY",
+    mdy: "MM/DD/YYYY"
+  };
+
+  const hint = `GoldCheck display format: ${labels[dateFormat]}. ` +
+    "The date picker may use your device's format.";
+
+  document.querySelectorAll(".date-format-hint")
+    .forEach(element => {
+      element.textContent = hint;
+    });
+}
+
+// ===== END: DATE FORMAT HINTS =====
+
+// ===== END: DATE FORMAT LOGIC =====
+
 const STORAGE_KEY = "goldcheck_v03";
 
 const el = id => document.getElementById(id);
@@ -312,8 +2909,19 @@ function rate() {
 function updateLabels() {
   const c = state.currency;
   el("spotLabel").textContent = `24K gold (${c} / gram)`;
-  el("priceLabel").textContent = `Store selling price (${c})`;
-  el("itemTitle").textContent = state.type + " details";
+  el("weightLabel").textContent =
+  weightUnit === "ozt"
+    ? "Total weight (troy ounces)"
+    : "Total weight (grams)";
+  el("priceLabel").textContent =
+  calculatorMode === "buy"
+    ? `Asking price (${c})`
+    : `Buyer's offer (${c})`;
+    el("price").placeholder =
+  calculatorMode === "buy"
+    ? "Enter asking price"
+    : "Enter buyer's offer";
+  el("itemTitle").textContent = "Gold item details";
   el("currency").value = c;
 
   el("jewelryTab").classList.toggle(
@@ -325,12 +2933,1228 @@ function updateLabels() {
 }
 
 function showItem() {
-  const item = state.items[state.type];
+  const item = calculatorMode === "sell"
+  ? sellItems[state.type]
+  : state.items[state.type];
   inputs.price.value = item.price;
-  inputs.weight.value = item.weight;
+  inputs.weight.value = gramsToDisplay(item.weight);
   inputs.purity.value = item.purity;
-  updateLabels();
-  calculate();
+
+updateLabels();
+
+inputs.weight.disabled = false;
+inputs.purity.disabled = false;
+
+if (calculatorMode === "sell") {
+  applySellSource();
+}
+
+calculate();
+
+}
+
+
+// GoldCheck v0.5 — Collection
+
+const COLLECTION_KEY = "goldcheck_collection_v05";
+
+let collection = [];
+
+try {
+  const saved = JSON.parse(
+    localStorage.getItem(COLLECTION_KEY) || "[]"
+  );
+  if (Array.isArray(saved)) {
+    collection = saved;
+  }
+} catch (error) {
+  console.error("Collection loading failed", error);
+}
+
+let purchaseDraft = null;
+
+function localDateToday() {
+  const now = new Date();
+  const local = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  );
+  return local.toISOString().slice(0, 10);
+}
+
+function openPurchase() {
+  if (calculatorMode !== "buy") return;
+
+  const price = Number(inputs.price.value);
+  const weight = weightToGrams(inputs.weight.value);
+  const purity = Number(inputs.purity.value);
+  const spot = Number(inputs.spot.value);
+
+  if (
+    inputs.price.value === "" ||
+    inputs.weight.value === "" ||
+    inputs.spot.value === "" ||
+    !Number.isFinite(price) ||
+    !Number.isFinite(weight) ||
+    !Number.isFinite(spot) ||
+    price < 0 || weight <= 0 ||
+    purity <= 0 || spot <= 0
+  ) {
+    alert("Enter a valid price, weight and fineness.");
+    return;
+  }
+
+  const goldValue = weight * purity * spot;
+  const premium = price - goldValue;
+
+  // Capture the values at the moment Purchase is pressed
+  purchaseDraft = {
+    price,
+    weightGrams: weight,
+    purity,
+    currency: state.currency,
+    spotPerGram: spot,
+    goldValue,
+    premium,
+    premiumPercent: premium / goldValue * 100,
+    quoteTime: state.quoteTime,
+    spotSource:
+      el("priceStatus").textContent.includes("Manual")
+        ? "Manual"
+        : "Gold-API",
+    status: "owned"
+  };
+
+
+      el("purchaseSummary").textContent =
+        `${format(price)} ${state.currency} | ` +
+        `${formatWeight(weight)} | ` +
+        `Spot: ${format(spot)} ${state.currency}/g`;
+
+
+  el("purchaseDate").value = localDateToday();
+  el("purchaseNotes").value = "";
+
+  el("purchaseConfirmation").hidden = false;
+  el("purchaseConfirmation").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function cancelPurchase() {
+  purchaseDraft = null;
+  el("purchaseConfirmation").hidden = true;
+}
+
+function savePurchase() {
+  if (!purchaseDraft) return;
+
+  const date = el("purchaseDate").value;
+
+  if (!date) {
+    alert("Please select a purchase date.");
+    return;
+  }
+
+  const record = {
+    ...purchaseDraft,
+    id: "item-" + Date.now() + "-" +
+      Math.random().toString(36).slice(2),
+    category: el("purchaseCategory").value,
+    purchaseDate: date,
+    notes: el("purchaseNotes").value.trim(),
+    recordedAt: new Date().toISOString()
+  };
+
+  const updated = [record, ...collection];
+
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updated)
+    );
+  } catch (error) {
+    alert("Could not save the purchase. Check storage.");
+    console.error(error);
+    return;
+  }
+
+  collection = updated;
+  cancelPurchase();
+  renderCollection();
+  refreshSellChoices();
+  showPage("collection");
+}
+
+// ===== START: COLLECTION FILTER LOGIC =====
+
+let collectionFilter = "all";
+
+function setCollectionFilter(filter) {
+  if (!["all", "owned", "sold", "trash"].includes(filter)) {
+    return;
+  }
+
+  // Cancel unsaved edits when switching Collection views.
+if (editingRecordId !== null) {
+  cancelEditRecord();
+}
+
+  // Collapse on filter changes only when enabled.
+if (autoCollapseCollection && collectionFilter !== filter) {
+  expandedCollectionId = null;
+}
+
+  collectionFilter = filter;
+
+  document.querySelectorAll(
+    ".collection-filters button"
+  ).forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.filter === filter
+    );
+  });
+
+  renderCollection();
+}
+
+// ===== END: COLLECTION FILTER LOGIC =====
+
+
+
+// ===== START: COLLECTION CARD RENDERING =====
+
+let expandedCollectionId = null;
+
+function renderCollection() {
+    const container = el("collectionItems");
+    container.replaceChildren();
+
+
+const visibleItems = collection.filter(item => {
+  const isTrashed = Boolean(item.deletedAt);
+
+  if (collectionFilter === "trash") {
+    return isTrashed;
+  }
+
+  // Trashed records are excluded from normal Collection views.
+  if (isTrashed) return false;
+
+  return collectionFilter === "all" ||
+    (item.status || "owned") === collectionFilter;
+});
+
+
+     if (visibleItems.length === 0) {
+     const empty = document.createElement("p");
+
+empty.textContent =
+  collectionFilter === "trash"
+    ? "Trash is empty."
+    : collectionFilter === "all"
+      ? "No collection items found."
+      : `No ${collectionFilter} items found.`;
+
+    container.appendChild(empty);
+    return;
+  }
+
+  visibleItems.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "card collection-card";
+
+    const summary = document.createElement("button");
+    summary.type = "button";
+    summary.className = "collection-summary";
+
+    const number = document.createElement("span");
+    number.className = "collection-number";
+    number.textContent = String(index + 1).padStart(2, "0");
+
+    const heading = document.createElement("div");
+    heading.className = "collection-summary-text";
+
+    const title = document.createElement("strong");
+    title.textContent = item.category;
+
+    const specs = document.createElement("div");
+    specs.className = "collection-specs";
+    specs.textContent =
+  `${formatWeight(item.weightGrams)} · ` +
+  formatCollectionKarat(item.purity);
+
+
+    heading.append(title, specs);
+
+    const isSold = item.status === "sold";
+
+    const status = document.createElement("span");
+    status.className =
+      "collection-status " + (isSold ? "sold" : "owned");
+    status.textContent = isSold ? "Sold" : "Owned";
+
+    const arrow = document.createElement("span");
+    arrow.className = "collection-arrow";
+
+    const opened = expandedCollectionId === item.id;
+    arrow.textContent = opened ? "⌃" : "⌄";
+
+    summary.append(number, heading, status, arrow);
+
+    const details = document.createElement("div");
+    details.className = "collection-details";
+    details.hidden = !opened;
+
+    summary.setAttribute("aria-expanded", String(opened));
+
+
+summary.addEventListener("click", () => {
+  // Cancel any unsaved edits when changing expanded items.
+  if (editingRecordId !== null) {
+    cancelEditRecord();
+  }
+
+  expandedCollectionId =
+    expandedCollectionId === item.id ? null : item.id;
+
+  renderCollection();
+});
+
+
+    function addRow(label, value, color = "") {
+      const row = document.createElement("div");
+      row.className = "line";
+
+      const text = document.createElement("span");
+      text.textContent = label;
+
+      const amount = document.createElement("strong");
+      amount.textContent = value;
+
+      if (color) amount.style.color = color;
+
+      row.append(text, amount);
+      details.appendChild(row);
+    }
+
+    addRow(
+      "Purchase price",
+      format(item.price) + " " + item.currency
+    );
+
+    addRow("Purchase date", formatDate(item.purchaseDate));
+
+    addRow(
+      "Gold price at purchase",
+      format(item.spotPerGram) +
+      " " + item.currency + "/g"
+    );
+
+    addRow(
+      "Estimated premium",
+      format(item.premiumPercent) + "%"
+    );
+
+    if (isSold) {
+      addRow(
+        "Sale price",
+        format(item.salePrice) +
+        " " + item.saleCurrency
+      );
+
+      addRow("Sale date", formatDate(item.saleDate));
+
+      const difference = Number(item.gainLoss);
+
+      addRow(
+        "Gain / loss",
+        (difference > 0 ? "+" : "") +
+        format(difference) + " " + item.saleCurrency,
+        difference >= 0 ? "#23805a" : "#b35d26"
+      );
+    }
+
+    if (item.notes) {
+      addRow("Notes", item.notes);
+    }
+
+    if (isSold && item.saleNotes) {
+      addRow("Sale notes", item.saleNotes);
+    }
+
+
+    // ===== START: COLLECTION ITEM ACTIONS =====
+
+    if (collectionFilter === "trash") {
+
+      // Trashed records can be restored.
+      const restoreButton = document.createElement("button");
+      restoreButton.type = "button";
+      restoreButton.className = "collection-edit-button";
+      restoreButton.textContent = "↩ Restore";
+
+      restoreButton.addEventListener("click", () => {
+        restoreFromTrash(item.id);
+      });
+
+      details.appendChild(restoreButton);
+
+      // ===== START: PERMANENT DELETE ACTION =====
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "collection-edit-button";
+      deleteButton.textContent = "Delete Permanently";
+
+      deleteButton.addEventListener("click", () => {
+        deletePermanently(item.id);
+      });
+
+      // Delete on the left, Restore on the right.
+      details.insertBefore(deleteButton, restoreButton);
+
+      // ===== END: PERMANENT DELETE ACTION =====
+
+    } else {
+
+      // Normal Collection items can be edited or trashed.
+      const trashButton = document.createElement("button");
+      trashButton.type = "button";
+      trashButton.className = "collection-edit-button";
+      trashButton.textContent = "Move to Trash";
+
+      trashButton.addEventListener("click", () => {
+        moveToTrash(item.id);
+      });
+
+      const editButton = document.createElement("button");
+      editButton.type = "button";
+      editButton.className = "collection-edit-button";
+      editButton.textContent = "✎ Edit";
+
+      editButton.addEventListener("click", () => {
+        openEditRecord(item.id);
+      });
+
+      // Trash on the left, Edit on the right.
+      details.append(trashButton, editButton);
+    }
+
+    // ===== END: COLLECTION ITEM ACTIONS =====
+
+    // ===== END: COLLECTION EDIT ACTION =====
+
+// Keep Collection action buttons the same height.
+const actionButtons = details.querySelectorAll(
+  ".collection-edit-button"
+);
+
+if (actionButtons.length > 0) {
+  const actions = document.createElement("div");
+  actions.className = "collection-actions";
+
+  actionButtons.forEach(button => {
+    actions.appendChild(button);
+  });
+
+  details.appendChild(actions);
+}
+
+    card.append(summary, details);
+        container.appendChild(card);
+  });
+}
+
+// ===== END: COLLECTION CARD RENDERING =====
+
+// ===== START: EDIT RECORD LOGIC =====
+
+
+// ===== START: EDIT RECORD LOGIC =====
+
+let editingRecordId = null;
+
+function openEditRecord(itemId) {
+  const item = collection.find(record =>
+    record.id === itemId
+  );
+
+  if (!item) return;
+
+  editingRecordId = item.id;
+
+
+
+const categorySelect = el("editCategory");
+
+// Reset the dropdown to currently available categories.
+// This removes temporary options from previous edits.
+const availableCategories = [
+  ...defaultCategories,
+  ...customCategories
+];
+
+categorySelect.replaceChildren();
+
+availableCategories.forEach(name => {
+  categorySelect.add(new Option(name, name));
+});
+
+// Preserve a removed category only when this
+// particular record still uses it.
+if (!availableCategories.includes(item.category)) {
+  categorySelect.add(
+    new Option(item.category, item.category)
+  );
+}
+
+categorySelect.value = item.category;
+
+
+  el("editWeight").value = item.weightGrams;
+  el("editPurity").value = String(item.purity);
+  el("editPrice").value = item.price;
+  el("editSpot").value = item.spotPerGram;
+  el("editDate").value = item.purchaseDate;
+  el("editNotes").value = item.notes || "";
+
+  const isSold = item.status === "sold";
+
+  el("editSaleFields").hidden = !isSold;
+
+  if (isSold) {
+    el("editSalePrice").value = item.salePrice;
+    el("editSaleDate").value = item.saleDate;
+    el("editSaleNotes").value = item.saleNotes || "";
+  }
+
+  el("editCurrencyNote").textContent =
+    "Record currency: " + item.currency +
+    ". Editing will preserve this currency.";
+
+  el("editRecordPanel").hidden = false;
+
+  el("editRecordPanel").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function cancelEditRecord() {
+  editingRecordId = null;
+  el("editRecordPanel").hidden = true;
+}
+
+
+function saveEditRecord() {
+  if (!editingRecordId) return;
+
+  const original = collection.find(
+    item => item.id === editingRecordId
+  );
+
+  if (!original) {
+    alert("Record not found.");
+    cancelEditRecord();
+    return;
+  }
+
+  // Read edited purchase information
+  const category = el("editCategory").value;
+  const weight = Number(el("editWeight").value);
+  const purity = Number(el("editPurity").value);
+  const price = Number(el("editPrice").value);
+  const spot = Number(el("editSpot").value);
+  const date = el("editDate").value;
+  const notes = el("editNotes").value.trim();
+
+  // Validate required purchase fields
+  if (
+    el("editWeight").value.trim() === "" ||
+    el("editPrice").value.trim() === "" ||
+    el("editSpot").value.trim() === "" ||
+    !Number.isFinite(weight) ||
+    !Number.isFinite(purity) ||
+    !Number.isFinite(price) ||
+    !Number.isFinite(spot) ||
+    weight <= 0 ||
+    purity <= 0 ||
+    purity > 1 ||
+    price < 0 ||
+    spot <= 0 ||
+    !date
+  ) {
+    alert("Enter valid purchase details before saving.");
+    return;
+  }
+
+  // Recalculate purchase values
+  const goldValue = weight * purity * spot;
+  const premium = price - goldValue;
+  const premiumPercent =
+    premium / goldValue * 100;
+
+  const changes = {
+    category,
+    weightGrams: weight,
+    purity,
+    price,
+    spotPerGram: spot,
+    purchaseDate: date,
+    notes,
+    goldValue,
+    premium,
+    premiumPercent,
+    editedAt: new Date().toISOString()
+  };
+
+  // Validate and recalculate sale details if sold
+  if (original.status === "sold") {
+    const salePrice = Number(el("editSalePrice").value);
+    const saleDate = el("editSaleDate").value;
+
+    if (
+      el("editSalePrice").value.trim() === "" ||
+      !Number.isFinite(salePrice) ||
+      salePrice < 0 ||
+      !saleDate
+    ) {
+      alert("Enter valid sale details before saving.");
+      return;
+    }
+
+    const difference = salePrice - price;
+
+    changes.salePrice = salePrice;
+    changes.saleDate = saleDate;
+    changes.saleNotes =
+      el("editSaleNotes").value.trim();
+
+    changes.gainLoss = difference;
+    changes.gainLossPercent =
+      price > 0 ? difference / price * 100 : null;
+  }
+
+  // Keep the original ID, currency and status
+  const updatedCollection = collection.map(item =>
+    item.id === editingRecordId
+      ? { ...item, ...changes }
+      : item
+  );
+
+  // Save first, then update the displayed Collection
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updatedCollection)
+    );
+  } catch (error) {
+    console.error("Record editing failed:", error);
+    alert("Could not save changes. Please try again.");
+    return;
+  }
+
+  collection = updatedCollection;
+
+  const editedId = editingRecordId;
+  cancelEditRecord();
+
+  expandedCollectionId = editedId;
+  renderCollection();
+  refreshSellChoices();
+}
+
+
+// ===== END: EDIT RECORD LOGIC =====
+
+// ===== START: GOLDCHECK CONFIRMATION LOGIC =====
+
+function goldCheckConfirm(title, message, actionLabel,
+                          destructive = false) {
+
+  const dialog = el("confirmDialog");
+  const actionButton = el("confirmActionButton");
+
+  el("confirmTitle").textContent = title;
+  el("confirmMessage").textContent = message;
+
+  actionButton.textContent = actionLabel;
+  actionButton.classList.toggle(
+    "destructive", destructive
+  );
+
+  // Reset any previous confirmation result.
+  dialog.returnValue = "";
+
+  return new Promise(resolve => {
+    dialog.addEventListener("close", () => {
+      resolve(dialog.returnValue === "confirm");
+    }, { once: true });
+
+    dialog.showModal();
+  });
+}
+
+// ===== END: GOLDCHECK CONFIRMATION LOGIC =====
+
+// ===== START: MOVE TO TRASH LOGIC =====
+
+async function moveToTrash(itemId) {
+  const item = collection.find(record =>
+    record.id === itemId
+  );
+
+  if (!item || item.deletedAt) return;
+
+  const confirmed = await goldCheckConfirm(
+    "Move to Trash?",
+    `Move this ${item.category} to Trash?\n\n` +
+    "You can restore it later. " +
+    "Purchase and sale history will be preserved.",
+    "Move to Trash"
+  );
+
+  if (!confirmed) return;
+
+  const updatedCollection = collection.map(record =>
+    record.id === itemId
+      ? {
+          ...record,
+          deletedAt: new Date().toISOString()
+        }
+      : record
+  );
+
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updatedCollection)
+    );
+  } catch (error) {
+    console.error("Move to Trash failed:", error);
+    alert("Could not move the item to Trash.");
+    return;
+  }
+
+  collection = updatedCollection;
+
+  // Close any expanded item or unsaved edit.
+  if (editingRecordId !== null) {
+    cancelEditRecord();
+  }
+
+  expandedCollectionId = null;
+
+  // Clear the Sell selection if this item was selected.
+  if (selectedSellId === itemId) {
+    selectedSellId = "";
+  }
+
+  refreshSellChoices();
+  renderCollection();
+}
+
+// ===== END: MOVE TO TRASH LOGIC =====
+
+
+async function restoreFromTrash(itemId) {
+  const item = collection.find(record =>
+    record.id === itemId
+  );
+
+  if (!item || !item.deletedAt) return;
+
+  const confirmed = await goldCheckConfirm(
+    "Restore Item?",
+    `Restore this ${item.category} to your Collection?\n\n` +
+    "Its original purchase and sale history will be preserved.",
+    "Restore"
+  );
+
+  if (!confirmed) return;
+
+  const updatedCollection = collection.map(record => {
+    if (record.id !== itemId) return record;
+
+    const restored = { ...record };
+    delete restored.deletedAt;
+
+    return restored;
+  });
+
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updatedCollection)
+    );
+  } catch (error) {
+    console.error("Restore failed:", error);
+    alert("Could not restore this item.");
+    return;
+  }
+
+  collection = updatedCollection;
+  expandedCollectionId = null;
+
+  refreshSellChoices();
+  renderCollection();
+}
+
+
+// ===== START: PERMANENT DELETE LOGIC =====
+
+async function deletePermanently(itemId) {
+  const item = collection.find(record =>
+    record.id === itemId
+  );
+
+  // Only records already in Trash can be deleted.
+  if (!item || !item.deletedAt) return;
+
+
+const confirmed = await goldCheckConfirm(
+  "Delete Permanently?",
+  `Permanently delete this ${item.category}?\n\n` +
+  "Its purchase and sale history will be lost.\n\n" +
+  "This action cannot be undone.",
+  "Delete",
+  true
+);
+
+
+  if (!confirmed) return;
+
+  const updatedCollection = collection.filter(
+    record => record.id !== itemId
+  );
+
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updatedCollection)
+    );
+  } catch (error) {
+    console.error("Permanent deletion failed:", error);
+    alert("Could not delete this record.");
+    return;
+  }
+
+  collection = updatedCollection;
+
+  if (editingRecordId !== null) {
+    cancelEditRecord();
+  }
+
+  expandedCollectionId = null;
+
+  if (selectedSellId === itemId) {
+    selectedSellId = "";
+  }
+
+  refreshSellChoices();
+  renderCollection();
+}
+
+// ===== END: PERMANENT DELETE LOGIC =====
+
+let calculatorMode = "buy";
+
+let selectedSellId = "";
+
+function refreshSellChoices() {
+  const select = el("sellSource");
+  const previous = selectedSellId;
+
+  select.replaceChildren();
+
+  const manual = new Option("Manual item", "");
+  select.add(manual);
+
+  collection
+    .filter(item =>
+  item.status === "owned" && !item.deletedAt
+)
+    .forEach(item => {
+      const label =
+  `${item.category} · ${formatWeight(item.weightGrams)}`;
+
+      select.add(new Option(label, item.id));
+    });
+
+  const stillExists = collection.some(
+    item => item.id === previous &&
+        item.status === "owned" &&
+        !item.deletedAt
+  );
+
+  selectedSellId = stillExists ? previous : "";
+  select.value = selectedSellId;
+}
+
+function changeSellSource() {
+  selectedSellId = el("sellSource").value;
+  showItem();
+document.querySelector(".tabs").hidden =
+  selectedSellId !== "";
+}
+
+
+// ===== START: SALE CONFIRMATION LOGIC =====
+
+let saleDraft = null;
+
+function openSale() {
+  if (calculatorMode !== "sell") return;
+
+  const item = collection.find(
+    record =>
+      record.id === selectedSellId &&
+      record.status === "owned"
+  );
+
+  if (!item) return;
+
+  const offer = Number(inputs.price.value);
+
+  if (
+    inputs.price.value === "" ||
+    !Number.isFinite(offer) ||
+    offer < 0
+  ) {
+    alert("Enter a valid buyer's offer first.");
+    return;
+  }
+
+  if (item.currency !== state.currency) {
+    alert(
+      "Switch to " + item.currency +
+      " before recording this sale."
+    );
+    return;
+  }
+
+  const difference = offer - item.price;
+  const percentage = item.price > 0
+    ? difference / item.price * 100
+    : null;
+
+  saleDraft = {
+    itemId: item.id,
+    salePrice: offer,
+    currency: state.currency,
+    gainLoss: difference,
+    gainLossPercent: percentage
+  };
+
+  el("saleSummary").textContent =
+  item.category + " | " +
+  formatWeight(item.weightGrams);
+
+  el("saleOriginalPrice").textContent =
+    format(item.price) + " " + item.currency;
+
+  el("saleFinalPrice").textContent =
+    format(offer) + " " + state.currency;
+
+  el("saleFinalGainLoss").textContent =
+    (difference > 0 ? "+" : "") +
+    format(difference) + " " + state.currency;
+
+  el("saleFinalGainLoss").style.color =
+    difference >= 0 ? "#23805a" : "#b35d26";
+
+  el("saleDate").value = localDateToday();
+  el("saleNotes").value = "";
+
+  el("saleConfirmation").hidden = false;
+
+  el("saleConfirmation").scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+function cancelSale() {
+  saleDraft = null;
+  el("saleConfirmation").hidden = true;
+}
+
+
+function saveSale() {
+  if (!saleDraft) return;
+
+  const date = el("saleDate").value;
+
+  if (!date) {
+    alert("Please select a sale date.");
+    return;
+  }
+
+  const item = collection.find(
+    record =>
+      record.id === saleDraft.itemId &&
+      record.status === "owned"
+  );
+
+  if (!item) {
+    alert("This item is no longer available for sale.");
+    cancelSale();
+    return;
+  }
+
+  // Preserve the original purchase record and
+  // add the confirmed sale information.
+  const updatedCollection = collection.map(record => {
+    if (record.id !== saleDraft.itemId) {
+      return record;
+    }
+
+    return {
+      ...record,
+      status: "sold",
+      salePrice: saleDraft.salePrice,
+      saleCurrency: saleDraft.currency,
+      saleDate: date,
+      saleNotes: el("saleNotes").value.trim(),
+      gainLoss: saleDraft.gainLoss,
+      gainLossPercent: saleDraft.gainLossPercent,
+      soldAt: new Date().toISOString()
+    };
+  });
+
+  try {
+    localStorage.setItem(
+      COLLECTION_KEY,
+      JSON.stringify(updatedCollection)
+    );
+  } catch (error) {
+    console.error("Sale saving failed:", error);
+    alert("Could not save the sale. Please try again.");
+    return;
+  }
+
+  // Update the collection only after saving succeeds.
+  collection = updatedCollection;
+
+  cancelSale();
+
+  // Clear the selected item because it is now sold.
+  selectedSellId = "";
+  refreshSellChoices();
+
+  // Reset the Sell calculator to manual entry.
+  sellItems[state.type].price = "";
+  saveSellItems();
+
+  showItem();
+
+  // Update Collection and navigate to it.
+  renderCollection();
+  showPage("collection");
+}
+
+
+// ===== END: SALE CONFIRMATION LOGIC =====
+
+
+function updateSellComparison() {
+const comparisonPanel = el("sellComparison");
+const position = el("sellComparisonPosition");
+
+if (comparisonPanel && position &&
+    comparisonPanel.previousElementSibling !== position) {
+  position.after(comparisonPanel);
+}
+  const panel = el("sellComparison");
+
+  if (!panel) {
+    console.warn("Sell comparison panel not found");
+    return;
+  }
+
+  const item = collection.find(
+    record =>
+      record.id === selectedSellId &&
+      record.status === "owned"
+  );
+
+  // Record Sale is available only for owned items
+  // selected from the Collection.
+  el("saleAction").hidden =
+    calculatorMode !== "sell" || !item;
+
+  // Only compare existing collection items in Sell mode
+  if (calculatorMode !== "sell" || !item) {
+    panel.hidden = true;
+    return;
+  }
+
+  panel.hidden = false;
+
+  el("originalPrice").textContent =
+    format(item.price) + " " + item.currency;
+
+  el("originalDate").textContent =
+  formatDate(item.purchaseDate);
+
+  const offer = Number(inputs.price.value);
+
+  if (inputs.price.value === "" ||
+      !Number.isFinite(offer) || offer < 0) {
+    el("comparisonOffer").textContent = "—";
+    el("saleGainLoss").textContent = "—";
+    el("saleComparisonNote").textContent =
+      "Enter a buyer's offer to compare.";
+    return;
+  }
+
+  el("comparisonOffer").textContent =
+    format(offer) + " " + state.currency;
+
+  // Avoid comparing amounts in different currencies
+  if (item.currency !== state.currency) {
+    el("saleGainLoss").textContent = "—";
+    el("saleComparisonNote").textContent =
+      "Purchase and offer currencies differ. " +
+      "Switch to " + item.currency +
+      " to compare without currency conversion.";
+    return;
+  }
+
+  const difference = offer - item.price;
+  const percentage =
+    item.price > 0
+      ? difference / item.price * 100
+      : null;
+
+  const result = el("saleGainLoss");
+
+  result.textContent =
+    (difference > 0 ? "+" : "") +
+    format(difference) + " " + state.currency;
+
+  result.className = "big " +
+    (difference >= 0 ? "negative" : "positive");
+
+  el("saleComparisonNote").textContent =
+    (percentage === null
+      ? "Percentage unavailable"
+      : (percentage > 0 ? "+" : "") +
+        format(percentage) + "% versus purchase") +
+    " · Before selling fees and costs.";
+}
+
+function applySellSource() {
+  const selected = collection.find(
+    item => item.id === selectedSellId &&
+            item.status === "owned" &&
+        !item.deletedAt
+  );
+
+  inputs.weight.disabled = false;
+  inputs.purity.disabled = false;
+
+  el("sellItemDetails").textContent = "";
+
+  if (!selected) {
+    selectedSellId = "";
+    el("sellSource").value = "";
+    return;
+  }
+
+  // Use the original item's saved specifications.
+  inputs.weight.value =
+  gramsToDisplay(selected.weightGrams);
+  inputs.purity.value = String(selected.purity);
+
+  inputs.weight.disabled = true;
+  inputs.purity.disabled = true;
+
+el("sellItemDetails").textContent =
+  `Purchased: ${format(selected.price)} ` +
+  `${selected.currency} on ${formatDate(selected.purchaseDate)}. ` +
+  `Weight and fineness loaded from Collection.`;
+
+}
+
+
+const SELL_STORAGE_KEY = "goldcheck_sell_items";
+
+let sellItems = defaultItems();
+
+try {
+  const savedSellItems = JSON.parse(
+    localStorage.getItem(SELL_STORAGE_KEY) || "null"
+  );
+
+  if (savedSellItems) {
+    for (const type of ["Jewelry", "Bullion"]) {
+      if (savedSellItems[type]) {
+        Object.assign(sellItems[type], savedSellItems[type]);
+      }
+    }
+  }
+} catch (error) {
+  console.warn("Could not load Sell inputs", error);
+}
+
+function saveSellItems() {
+  try {
+    localStorage.setItem(
+      SELL_STORAGE_KEY,
+      JSON.stringify(sellItems)
+    );
+  } catch (error) {
+    console.warn("Could not save Sell inputs", error);
+  }
+}
+
+
+function setMode(mode) {
+  if (!["buy", "sell"].includes(mode)) return;
+
+  calculatorMode = mode;
+
+  el("buyMode").classList.toggle(
+    "active", mode === "buy"
+  );
+
+  el("sellMode").classList.toggle(
+    "active", mode === "sell"
+  );
+
+  // Update input labels according to transaction type
+  el("priceLabel").textContent =
+    mode === "buy"
+      ? `Asking price (${state.currency})`
+      : `Buyer's offer (${state.currency})`;
+el("price").placeholder =
+  mode === "buy"
+    ? "Enter asking price"
+    : "Enter buyer's offer";
+  // Persist the chosen mode
+  localStorage.setItem("goldcheck_calculator_mode", mode);
+
+  el("purchaseAction").hidden = mode !== "buy";
+  cancelPurchase();
+
+
+// Show collection selector only when selling
+el("sellSourceBox").hidden = mode !== "sell";
+
+// Refresh the list of owned items
+if (mode === "sell") {
+  refreshSellChoices();
+}
+
+// Keep Jewelry/Bullion tabs for manual entries,
+// but hide them when selling a collection item.
+document.querySelector(".tabs").hidden =
+  mode === "sell" && selectedSellId !== "";
+
+    showItem();
 }
 
 function setType(type) {
@@ -371,13 +4195,22 @@ function updateSpotDisplay() {
           ` | FX date: ${state.fxDate || "unknown"}`
         : "Exchange rate unavailable.";
 
+  // Update the shared gold price header
+  el("headerSpot").textContent =
+    inputs.spot.value !== ""
+      ? Number(inputs.spot.value).toFixed(2)
+      : "—";
+
+  el("headerCurrency").textContent =
+    state.currency + "/g";
+
   calculate();
 }
 
 function calculate() {
   const spot = Number(inputs.spot.value);
   const price = Number(inputs.price.value);
-  const weight = Number(inputs.weight.value);
+  const weight = weightToGrams(inputs.weight.value);
   const purity = Number(inputs.purity.value);
 
   const valid =
@@ -393,9 +4226,10 @@ function calculate() {
   ];
 
   if (!valid) {
-    fields.forEach(id => el(id).textContent = "—");
-    return;
-  }
+  fields.forEach(id => el(id).textContent = "—");
+  updateSellComparison();
+  return;
+}
 
   const pureGoldWeight = weight * purity;
   const goldValue = pureGoldWeight * spot;
@@ -408,8 +4242,25 @@ function calculate() {
   pct.textContent =
     (premiumPct >= 0 ? "+" : "") +
     format(premiumPct) + "%";
+
+  // Interpret results based on Buy or Sell mode
+  const isBuy = calculatorMode === "buy";
+
+  el("premiumLabel").textContent = isBuy
+    ? "Estimated premium above spot"
+    : "Offer versus estimated gold value";
+
+
+if (isBuy) {
+  // Buying: below spot is favorable
   pct.className = "big " +
-    (premiumPct >= 0 ? "positive" : "negative");
+    (premiumPct <= 0 ? "negative" : "positive");
+} else {
+  // Selling: spot comparison is neutral information
+  pct.className = "big";
+}
+
+
 
   const c = state.currency;
   el("premiumGram").textContent =
@@ -420,20 +4271,70 @@ function calculate() {
     format(totalPremium) + " " + c;
   el("effectivePrice").textContent =
     format(effectivePrice) + " " + c + "/g";
+
+  updateSellComparison();
 }
 
-// Store tab inputs independently
+// ===== START: SELECT CALCULATOR INPUT ON FOCUS =====
+
+["price", "weight", "spot"].forEach(id => {
+  const input = el(id);
+
+  input.addEventListener("focus", () => {
+    input.select();
+  });
+});
+
+// ===== END: SELECT CALCULATOR INPUT ON FOCUS =====
+
+// Store inputs independently for Buy and Sell
 for (const id of ["price", "weight", "purity"]) {
   inputs[id].addEventListener("input", () => {
-    state.items[state.type][id] = inputs[id].value;
-    save();
+    const items = calculatorMode === "sell"
+      ? sellItems
+      : state.items;
+
+
+    // Always store weights in grams.
+    if (id === "weight") {
+      const entered = inputs.weight.value;
+
+      items[state.type].weight =
+        entered === ""
+          ? ""
+          : String(weightToGrams(entered));
+    } else {
+      items[state.type][id] = inputs[id].value;
+    }
+
+
+    if (calculatorMode === "sell") {
+      saveSellItems();
+    } else {
+      save();
+    }
+
     calculate();
   });
 }
 
+
 inputs.spot.addEventListener("input", () => {
+  const manualPrice = Number(inputs.spot.value);
+
+  el("headerSpot").textContent =
+    inputs.spot.value !== "" &&
+    Number.isFinite(manualPrice) &&
+    manualPrice > 0
+      ? manualPrice.toFixed(2)
+      : "—";
+
   el("priceStatus").textContent =
-    "Manual spot price — press Refresh for a new quote";
+    "Manual gold price active until next refresh";
+
+  el("headerStatus").textContent =
+    "Manual price · Tap to refresh";
+
   calculate();
 });
 
@@ -443,6 +4344,9 @@ el("currency").addEventListener("change", () => {
   // Avoid interpreting a SAR shop price as PHP, etc.
   state.items.Jewelry.price = "";
   state.items.Bullion.price = "";
+  sellItems.Jewelry.price = "";
+  sellItems.Bullion.price = "";
+  saveSellItems();
 
   save();
   showItem();
@@ -512,73 +4416,530 @@ async function fetchGold() {
 }
 
 // Refresh both sources, preserving usable saved data
-async function refreshPrices() {
-  const button = el("refreshBtn");
+// ===== START: REFRESH GOLD PRICES =====
 
-  // Prevent overlapping refresh requests
+async function refreshPrices() {
+  const button = el("spotRefresh");
+  const status = el("headerStatus");
+
   if (button.disabled) return;
 
   button.disabled = true;
-  button.textContent = "↻ Updating...";
+  button.classList.remove("success", "failure");
+  status.textContent = "Updating gold price...";
 
-  // Record when the refresh started
-  const startTime = Date.now();
+  const start = Date.now();
+  let success = false;
 
-  const results = await Promise.allSettled([
-    fetchGold(),
-    fetchRates()
-  ]);
+  try {
+    const results = await Promise.allSettled([
+      fetchGold(),
+      fetchRates()
+    ]);
 
-  updateSpotDisplay();
+    const goldOK = results[0].status === "fulfilled";
+    const fxOK = results[1].status === "fulfilled";
 
-  const errors = [];
+    if (!goldOK) console.error(results[0].reason);
+    if (!fxOK) console.error(results[1].reason);
 
-  if (results[0].status === "rejected") {
-    errors.push("gold");
-    console.error(results[0].reason);
-  }
+    updateSpotDisplay();
 
-  if (results[1].status === "rejected") {
-    errors.push("currency");
-    console.error(results[1].reason);
-  }
+    success = goldOK && fxOK;
 
-  // Keep Updating visible for at least 500 milliseconds
-  const elapsed = Date.now() - startTime;
-  if (elapsed < 500) {
-    await new Promise(resolve =>
-      setTimeout(resolve, 500 - elapsed)
+    const elapsed = Date.now() - start;
+    if (elapsed < 500) {
+      await new Promise(resolve =>
+        setTimeout(resolve, 500 - elapsed)
+      );
+    }
+
+    button.classList.add(
+      success ? "success" : "failure"
     );
+
+    status.textContent = success
+      ? "✓ Prices checked successfully"
+      : "⚠ Price update incomplete";
+
+  } catch (error) {
+    console.error("Refresh error:", error);
+
+    button.classList.add("failure");
+    status.textContent = "⚠ Refresh failed";
+
+  } finally {
+    // Always restore the button, even after an error
+    await new Promise(resolve =>
+      setTimeout(resolve, 1000)
+    );
+
+    button.classList.remove("success", "failure");
+    button.disabled = false;
+    status.textContent = "Tap price to refresh";
   }
+}
+// ===== END: REFRESH GOLD PRICES =====
 
-  // Show when the last successful refresh happened
-  const refreshTime = new Date().toLocaleTimeString();
+// ===== START: JSON BACKUP EXPORT =====
 
-  if (errors.length === 0) {
-    button.textContent = "✓ Updated";
-    button.style.backgroundColor = "#23805a";
-    el("fxStatus").textContent +=
-      " | Last checked: " + refreshTime;
-  } else {
-    button.textContent = "⚠ Update failed";
-    button.style.backgroundColor = "#b54545";
-    el("fxStatus").textContent +=
-      " | " + errors.join(" and ") +
-      " feed failed. Saved prices may be outdated.";
+function exportBackup() {
+  const backup = {
+    app: "GoldCheck",
+    schemaVersion: 1,
+    exportedAt: new Date().toISOString(),
+
+    data: {
+      collection: collection,
+
+      customCategories: customCategories,
+
+      preferences: {
+        currency: state.currency,
+        appearance: appearanceMode,
+        textSize: textSizeMode,
+        weightUnit: weightUnit,
+        dateFormat: dateFormat,
+        autoCollapseCollection: autoCollapseCollection
+      }
+    }
+  };
+
+  try {
+    const json = JSON.stringify(backup, null, 2);
+
+    const blob = new Blob([json], {
+      type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download =
+      `GoldCheck_Backup_${localDateToday()}.json`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+
+  } catch (error) {
+    console.error("Backup export failed:", error);
+    alert("Could not export backup. Please try again.");
   }
-
-  // Keep success/failure feedback visible for one second
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  button.textContent = "Refresh Gold Price";
-  button.style.backgroundColor = "#292720";
-  button.disabled = false;
 }
 
+// ===== END: JSON BACKUP EXPORT =====
+
+// ===== START: JSON BACKUP IMPORT PREVIEW =====
+
+let pendingBackupImport = null;
+
+async function previewBackupImport() {
+  const fileInput = el("backupFile");
+  const preview = el("backupImportPreview");
+  const summary = el("backupImportSummary");
+
+  pendingBackupImport = null;
+  preview.hidden = true;
+  summary.textContent = "";
+
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  // Limit unexpectedly large files.
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Backup file is too large (maximum 5 MB).");
+    fileInput.value = "";
+    return;
+  }
+
+  try {
+    const text = await file.text();
+    const backup = JSON.parse(text);
+
+    // Check GoldCheck backup identity and format.
+    if (
+      !backup ||
+      backup.app !== "GoldCheck" ||
+      backup.schemaVersion !== 1 ||
+      !backup.data ||
+      typeof backup.data !== "object" ||
+      !Array.isArray(backup.data.collection) ||
+      !Array.isArray(backup.data.customCategories) ||
+      !backup.data.preferences ||
+      typeof backup.data.preferences !== "object" ||
+      Array.isArray(backup.data.preferences)
+    ) {
+      throw new Error("Not a supported GoldCheck backup.");
+    }
+
+    // Verify that every Collection entry has
+    // the essential fields used by the app.
+    const validRecords = backup.data.collection.every(item =>
+      item &&
+      typeof item === "object" &&
+      typeof item.id === "string" &&
+      typeof item.category === "string" &&
+      typeof item.currency === "string" &&
+      typeof item.purchaseDate === "string" &&
+      ["owned", "sold"].includes(item.status) &&
+      Number.isFinite(item.weightGrams) &&
+      item.weightGrams > 0 &&
+      Number.isFinite(item.purity) &&
+      item.purity > 0 &&
+      item.purity <= 1 &&
+      Number.isFinite(item.price) &&
+      item.price >= 0 &&
+      Number.isFinite(item.spotPerGram) &&
+      item.spotPerGram > 0
+    );
+
+    if (!validRecords) {
+      throw new Error("Backup contains invalid Collection records.");
+    }
+
+    const categoriesValid =
+      backup.data.customCategories.length <= MAX_CUSTOM_CATEGORIES &&
+      backup.data.customCategories.every(category =>
+        typeof category === "string" &&
+        category.trim().length > 0 &&
+        category.length <= 30
+      );
+
+    if (!categoriesValid) {
+      throw new Error("Backup contains invalid custom categories.");
+    }
+
+    const records = backup.data.collection;
+    const owned = records.filter(item =>
+      item.status === "owned" && !item.deletedAt
+    ).length;
+
+    const sold = records.filter(item =>
+      item.status === "sold" && !item.deletedAt
+    ).length;
+
+    const trashed = records.filter(item =>
+      Boolean(item.deletedAt)
+    ).length;
+
+    validateBackupForRestore(backup);
+
+    pendingBackupImport = backup;
+
+    const exportDate = backup.exportedAt
+      ? new Date(backup.exportedAt)
+      : null;
+
+    const dateLabel =
+      exportDate && !Number.isNaN(exportDate.getTime())
+        ? exportDate.toLocaleString()
+        : "Unknown";
+
+    summary.textContent =
+      `Backup created: ${dateLabel}\n` +
+      `Total Collection records: ${records.length}\n` +
+      `Owned: ${owned}\n` +
+      `Sold: ${sold}\n` +
+      `Trash: ${trashed}\n` +
+      `Custom categories: ${backup.data.customCategories.length}\n` +
+      `Preferences: Included\n\n` +
+      `Preview only — no data has been changed.`;
+
+    summary.style.whiteSpace = "pre-line";
+    preview.hidden = false;
+
+  } catch (error) {
+    console.error("Backup preview failed:", error);
+
+    alert(
+      "Could not read backup.\n\n" +
+      error.message
+    );
+
+    fileInput.value = "";
+  }
+}
+
+// ===== END: JSON BACKUP IMPORT PREVIEW =====
+
+/* ===== START: STRICT BACKUP VALIDATION ===== */
+
+function validateBackupForRestore(backup) {
+  if (
+    !backup ||
+    backup.app !== "GoldCheck" ||
+    backup.schemaVersion !== 1 ||
+    !backup.data ||
+    !Array.isArray(backup.data.collection) ||
+    !Array.isArray(backup.data.customCategories) ||
+    !backup.data.preferences ||
+    typeof backup.data.preferences !== "object" ||
+    Array.isArray(backup.data.preferences)
+  ) {
+    throw new Error("Unsupported GoldCheck backup.");
+  }
+
+  const { collection: records,
+          customCategories: categories,
+          preferences: prefs } = backup.data;
+
+  const validDate = value =>
+    typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+    !Number.isNaN(Date.parse(value)) &&
+    new Date(value).toISOString().slice(0, 10) === value;
+
+  const ids = new Set();
+
+  for (const item of records) {
+    if (
+      !item ||
+      typeof item !== "object" ||
+      typeof item.id !== "string" ||
+      !item.id ||
+      ids.has(item.id) ||
+      typeof item.category !== "string" ||
+      !item.category.trim() ||
+      typeof item.currency !== "string" ||
+      ![...el("currency").options].some(
+        option => option.value === item.currency
+      ) ||
+      !validDate(item.purchaseDate) ||
+      !["owned", "sold"].includes(item.status) ||
+      !Number.isFinite(item.weightGrams) ||
+      item.weightGrams <= 0 ||
+      !Number.isFinite(item.purity) ||
+      item.purity <= 0 ||
+      item.purity > 1 ||
+      !Number.isFinite(item.price) ||
+      item.price < 0 ||
+      !Number.isFinite(item.spotPerGram) ||
+      item.spotPerGram <= 0
+    ) {
+      throw new Error(
+        "Invalid or duplicate Collection record."
+      );
+    }
+
+    ids.add(item.id);
+
+    if (
+      item.deletedAt !== undefined &&
+      (typeof item.deletedAt !== "string" ||
+       !Number.isFinite(Date.parse(item.deletedAt)))
+    ) {
+      throw new Error("Invalid Trash record.");
+    }
+
+    if (item.status === "sold") {
+      if (
+        !Number.isFinite(item.salePrice) ||
+        item.salePrice < 0 ||
+        !validDate(item.saleDate) ||
+        item.saleCurrency !== item.currency ||
+        !Number.isFinite(item.gainLoss)
+      ) {
+        throw new Error("Invalid sale record.");
+      }
+    }
+  }
+
+  if (
+    categories.length > MAX_CUSTOM_CATEGORIES ||
+    categories.some(name =>
+      typeof name !== "string" ||
+      !name.trim() ||
+      name.length > 30
+    )
+  ) {
+    throw new Error("Invalid custom categories.");
+  }
+
+  const categoryNames = [
+    ...defaultCategories,
+    ...categories
+  ].map(name => name.toLowerCase());
+
+  if (new Set(categoryNames).size !== categoryNames.length) {
+    throw new Error("Duplicate custom categories.");
+  }
+
+  const allowed = {
+    appearance: ["system", "light", "dark"],
+    textSize: ["normal", "large", "extra"],
+    weightUnit: ["g", "ozt"],
+    dateFormat: ["ymd", "dmy", "mdy"]
+  };
+
+  for (const [key, values] of Object.entries(allowed)) {
+    if (!values.includes(prefs[key])) {
+      throw new Error(`Invalid preference: ${key}`);
+    }
+  }
+
+  if (
+    ![...el("currency").options].some(
+      option => option.value === prefs.currency
+    ) ||
+    typeof prefs.autoCollapseCollection !== "boolean"
+  ) {
+    throw new Error("Invalid backup preferences.");
+  }
+
+  return true;
+}
+
+/* ===== END: STRICT BACKUP VALIDATION ===== */
+
+// ===== START: JSON BACKUP RESTORE =====
+
+async function restoreBackup() {
+  const backup = pendingBackupImport;
+
+  if (!backup) {
+    alert("Select and preview a valid backup first.");
+    return;
+  }
+
+  // Validate again immediately before restoring.
+  try {
+    validateBackupForRestore(backup);
+  } catch (error) {
+    alert("Backup validation failed: " + error.message);
+    return;
+  }
+
+  const records = backup.data.collection;
+  const categories = backup.data.customCategories;
+  const prefs = backup.data.preferences;
+
+  const confirmed = await goldCheckConfirm(
+    "Restore Backup?",
+    `This backup contains ${records.length} Collection records.\n\n` +
+    "Restoring will REPLACE your current Collection, " +
+    "custom categories, and preferences.\n\n" +
+    "Existing records not included in this backup " +
+    "will be lost from GoldCheck.\n\n" +
+    "Export your current data first if you want to keep it.",
+    "Restore Backup",
+    true
+  );
+
+  if (!confirmed) return;
+
+  // Preserve existing market data and calculator inputs,
+  // but restore the backed-up currency.
+  const currencyChanged = prefs.currency !== state.currency;
+
+const restoredState = {
+  ...state,
+  currency: prefs.currency
+};
+
+const restoredSellItems = structuredClone(sellItems);
+
+// Prevent old calculator prices from being interpreted
+// as amounts in the restored currency.
+if (currencyChanged) {
+  restoredState.items.Jewelry.price = "";
+  restoredState.items.Bullion.price = "";
+
+  restoredSellItems.Jewelry.price = "";
+  restoredSellItems.Bullion.price = "";
+}
+
+  const changes = {
+  [COLLECTION_KEY]: JSON.stringify(records),
+  [CUSTOM_CATEGORY_KEY]: JSON.stringify(categories),
+  [STORAGE_KEY]: JSON.stringify(restoredState),
+  [SELL_STORAGE_KEY]: JSON.stringify(restoredSellItems),
+    [APPEARANCE_KEY]: prefs.appearance,
+    [TEXT_SIZE_KEY]: prefs.textSize,
+    [WEIGHT_UNIT_KEY]: prefs.weightUnit,
+    [DATE_FORMAT_KEY]: prefs.dateFormat,
+    [AUTO_COLLAPSE_KEY]: String(prefs.autoCollapseCollection)
+  };
+
+  const previousValues = {};
+  const keys = Object.keys(changes);
+
+  try {
+    // Snapshot current storage before changing anything.
+    for (const key of keys) {
+      previousValues[key] = localStorage.getItem(key);
+    }
+
+    // Save all restored values.
+    for (const key of keys) {
+      localStorage.setItem(key, changes[key]);
+    }
+
+  } catch (error) {
+    console.error("Backup restoration failed:", error);
+
+    // Attempt to restore the previous values.
+    let rollbackFailed = false;
+
+    for (const key of keys) {
+      try {
+        if (previousValues[key] === null) {
+          localStorage.removeItem(key);
+        } else if (previousValues[key] !== undefined) {
+          localStorage.setItem(key, previousValues[key]);
+        }
+      } catch (rollbackError) {
+        rollbackFailed = true;
+        console.error("Rollback failed:", rollbackError);
+      }
+    }
+
+    alert(
+      rollbackFailed
+        ? "Restore failed and some data could not be recovered. " +
+          "Do not make further changes. Keep your JSON backup."
+        : "Restore failed. Previous saved data was restored."
+    );
+    return;
+  }
+
+  alert(
+    "Backup restored successfully.\n\n" +
+    "GoldCheck will reload to apply your preferences."
+  );
+
+  // Reload so all settings and Collection data
+  // are initialized from restored storage.
+  window.location.reload();
+}
+
+// ===== END: JSON BACKUP RESTORE =====
+
+renderCollection();
+renderCustomCategories();
+updateCategoryDropdowns();
+
 // Initialize
+// Use the Jewelry profile for the unified gold calculator.
+state.type = "Jewelry";
+
+const savedMode = localStorage.getItem(
+  "goldcheck_calculator_mode"
+);
+
+setMode(savedMode === "sell" ? "sell" : "buy");
+
 updateLabels();
 showItem();
 updateSpotDisplay();
+showPage("calculator");
+updateTopSpacing();
+
 
 // Automatically refresh when opening
 refreshPrices();
