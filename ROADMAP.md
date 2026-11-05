@@ -1,51 +1,53 @@
 # GoldCheck — Development Roadmap
 
-## v0.5 — Jewelry Collection & UI Redesign
+
+## v0.5 — Collection & UI Redesign
+
+**Status: Completed — Preparing Release**
 
 ### Calculator
-- Shared gold spot price header across tabs.
-- Tap gold spot price to refresh.
-- Larger, accessible inputs and text.
-- Buy / Sell switch inside Calculator.
-- Buy calculator for evaluating jewelry prices.
-- Sell calculator that retrieves saved collection items.
-- Manual item option for selling unrecorded jewelry.
-- Keep calculation results labeled as estimates.
+- [x] Fixed gold spot-price header with tap-to-refresh.
+- [x] Buy and Sell calculator modes.
+- [x] Separate saved inputs for Buy and Sell.
+- [x] Manual Sell calculations.
+- [x] Sell calculations using owned Collection items.
+- [x] Estimated gold value and premium comparisons.
+- [x] Original purchase versus selling-offer comparisons.
 
 ### Collection
-- Record purchases through a confirmation screen.
-- Choose jewelry category when saving a purchase.
-- Save purchase date, price, currency, weight, and fineness.
-- Save the gold spot price and quote timestamp at purchase.
-- View active and sold jewelry.
-- Calculate current estimated metal value.
-- Compare selling offers with original purchase prices.
-- Record confirmed sales without deleting purchase history.
+- [x] Record purchases with confirmation.
+- [x] Record sales while retaining purchase history.
+- [x] Save historical purchase values and spot prices.
+- [x] View Owned, Sold, and Trash records.
+- [x] Edit Collection records.
+- [x] Restore or permanently delete records.
+- [x] Expandable Collection cards.
+- [x] Custom item categories.
+- [x] JSON backup export and validated restore.
 
 ### Settings
-- Default currency selection.
-- Default weight unit (g, troy oz, tola).
-- Light and dark appearance modes.
-- Standard and large text settings.
-- Custom jewelry category management.
-- Export and import collection backups.
+- [x] Currency selection.
+- [x] Grams and troy ounces.
+- [x] Light, dark, and system themes.
+- [x] Normal, Large, and Extra Large text.
+- [x] Date display format selection.
+- [x] Collection auto-collapse setting.
+- [x] Collapsible Settings sections.
 
-### Default Categories
-- Ring
-- Necklace
-- Bracelet
-- Earrings
-- Pendant
-- Other
-- Bullion Bar
-- Coin
+### Interface & PWA
+- [x] Mobile-first layout redesign.
+- [x] Fixed header and bottom navigation.
+- [x] Dedicated Settings button.
+- [x] Small-screen and landscape improvements.
+- [x] Offline app loading.
+- [x] PWA installation and cache-update testing.
 
-### Interface
-- Bottom tabs: Calculator, Collection, Settings.
-- Highlight the active tab.
-- Shared spot price header.
-- Remove unnecessary calculator headings.
-- Maintain mobile-first design.
+### Deferred
+- [ ] Additional weight standards, including tola.
+- [ ] Dedicated current metal-value display for Collection.
+- [ ] More advanced jewelry, bullion, and coin comparisons.
+- [ ] Dedicated two-column landscape interface.
+
 
 ## Future Versions — Under Consideration
 
@@ -57,6 +59,9 @@
 - Potential collection capacity limits.
 - Potential custom-category limits.
 - Android APK or app-store release.
+- Dedicated two-column landscape layout.
+- Optional current metal-value summaries for Collection.
+- Tola and other regional weight units.
 
 ## Design Principles
 

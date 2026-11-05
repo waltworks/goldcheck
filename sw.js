@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "goldcheck-v04";
+const CACHE_NAME = "goldcheck-v05";
 
 const APP_FILES = [
   "./",
@@ -25,7 +25,10 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(key => key !== CACHE_NAME)
+          .filter(key =>
+  key.startsWith("goldcheck-") &&
+  key !== CACHE_NAME
+)
           .map(key => caches.delete(key))
       )
     )
@@ -33,18 +36,52 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-// Serve saved app files when offline
+
+/* ===== START: NETWORK-FIRST OFFLINE CACHE ===== */
+
+// Serve fresh files when online and cached files when offline.
 self.addEventListener("fetch", event => {
   const request = event.request;
 
   if (request.method !== "GET") return;
 
-  // Never cache external gold or currency API responses
-  if (new URL(request.url).origin !== self.location.origin) {
-    return;
-  }
+  const url = new URL(request.url);
 
-  event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+  // Never intercept external gold or currency APIs.
+  if (url.origin !== self.location.origin) return;
+
+  // Only cache GoldCheck's own app files.
+  const appURLs = APP_FILES.map(path =>
+    new URL(path, self.registration.scope).href
   );
+
+  if (!appURLs.includes(url.href)) return;
+
+  event.respondWith((async () => {
+    try {
+      const response = await fetch(request);
+
+      // Update the offline copy after a successful request.
+      if (response.ok) {
+        try {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put(request, response.clone());
+        } catch (cacheError) {
+          console.warn("Cache update failed:", cacheError);
+        }
+      }
+
+      return response;
+
+    } catch (error) {
+      // Network unavailable: use the saved app file.
+      const cached = await caches.match(request);
+
+      if (cached) return cached;
+
+      return Response.error();
+    }
+  })());
 });
+
+/* ===== END: NETWORK-FIRST OFFLINE CACHE ===== */
